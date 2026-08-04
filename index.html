@@ -66,6 +66,9 @@
         
         /* Admin Panel Styles */
         .upload-box { border: 2px dashed #ccc; padding: 15px; text-align: center; border-radius: 6px; cursor: pointer; background: #fafafa; margin-bottom: 15px; }
+        .single-add-box { background: #f1f3f5; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
+        .single-add-box textarea { width: 100%; height: 70px; padding: 8px; font-size: 11px; font-family: monospace; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 8px; }
+        
         .token-item { background: #fdfdfd; border: 1px solid #eee; padding: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; }
         .token-item span { color: #666; display: block; word-break: break-all; font-size: 10px; }
         .btn-del { background: var(--primary); color: white; border: none; padding: 5px 8px; border-radius: 3px; cursor: pointer; }
@@ -129,10 +132,18 @@
             <button class="btn-back" onclick="toggleAdmin()"><i class="fa-solid fa-arrow-left"></i> User Panel</button>
             <h2>Admin Control (<span id="countSpan">0</span> accounts)</h2>
             
+            <!-- Single Link Add Section -->
+            <div class="single-add-box">
+                <b style="font-size: 12px; color: #333;"><i class="fa-solid fa-plus"></i> Add Single Account (PC/Mobile/TV links):</b>
+                <textarea id="singleInputText" placeholder="Yahan PC, Mobile ya TV ke links paste karein..."></textarea>
+                <button class="action-btn" style="margin-top:0; padding:8px; font-size:12px;" onclick="addSingleAccount()">Add Single Account</button>
+            </div>
+
+            <!-- Bulk File Upload Section -->
             <div class="upload-box" onclick="document.getElementById('txtFile').click()">
                 <i class="fa-solid fa-file-arrow-up" style="font-size: 24px; color: var(--primary);"></i><br>
                 <b style="font-size: 13px;">Upload .TXT File Here</b><br>
-                <span style="font-size: 10px; color: #888;">Direct bulk add support</span>
+                <span style="font-size: 10px; color: #888;">Direct bulk add support (PC, Mobile, TV)</span>
                 <input type="file" id="txtFile" accept=".txt" style="display:none" onchange="uploadTxtFile(event)">
             </div>
 
@@ -141,27 +152,23 @@
                 <button class="btn-del-all" onclick="clearAll()"><i class="fa-solid fa-trash"></i> Delete All</button>
             </div>
             
-            <div id="adminList" style="max-height: 250px; overflow-y: auto;"></div>
+            <div id="adminList" style="max-height: 220px; overflow-y: auto;"></div>
         </div>
     </div>
+
     <script>
         let accounts = JSON.parse(localStorage.getItem('netflix_tokens')) || [];
         let activeAccount = null;
 
-        // Check if current browser session is logged in as Admin
         function checkAdminSession() {
             return sessionStorage.getItem('admin_logged_in') === 'true';
         }
 
-        // Function to trigger Adsterra ads (Sirf Normal Users ke liye chalega, Admin ke liye nahi)
         function triggerAds() {
-            if (checkAdminSession()) {
-                // Agar admin logged in hai, toh ads bilkul load nahi honge
-                return; 
-            }
+            if (checkAdminSession()) return; 
 
             let container = document.getElementById('adScriptContainer');
-            container.innerHTML = ""; // Clear old ad scripts to trigger fresh click ads
+            container.innerHTML = ""; 
 
             let script1 = document.createElement('script');
             script1.src = "https://pl30667971.effectivecpmnetwork.com/98/90/a2/9890a2c8724dcf3e5b0aa9c9b553934e.js";
@@ -178,7 +185,6 @@
             let aPanel = document.getElementById('adminPanel');
             
             if(uPanel.classList.contains('active')) {
-                // Agar pehle se logged in hai toh direct panel khol do, warna password pucho
                 if(checkAdminSession()) {
                     openAdminDashboard();
                     return;
@@ -186,12 +192,8 @@
 
                 let p = prompt("Password enter karein:");
                 if(p === "Aliasgar71") {
-                    // Save admin session in browser memory so ads stay disabled for admin
                     sessionStorage.setItem('admin_logged_in', 'true');
-                    
-                    // Turant saare active ads hata do jo chal rahe hon
                     document.getElementById('adScriptContainer').innerHTML = ""; 
-
                     openAdminDashboard();
                 } else if(p !== null) {
                     alert("Wrong password!");
@@ -219,7 +221,7 @@
         }
 
         function generateToken() {
-            triggerAds(); // Normal user ke click par ad aayega, admin ke click par nahi
+            triggerAds(); 
             if(accounts.length === 0) {
                 alert("Koi account available nahi hai! Pehle admin panel se upload karein.");
                 return;
@@ -230,12 +232,13 @@
         }
 
         function getDeviceLink(type) {
-            triggerAds(); // Normal user ke device selection par ad aayega
+            triggerAds(); 
             if(!activeAccount) return;
             let link = "";
-            if(type === 'PC') link = activeAccount.pc;
-            else if(type === 'Mobile') link = activeAccount.mobile;
-            else if(type === 'TV') link = activeAccount.tv;
+            
+            if(type === 'PC') link = activeAccount.pc || activeAccount.mobile || activeAccount.tv;
+            else if(type === 'Mobile') link = activeAccount.mobile || activeAccount.pc || activeAccount.tv;
+            else if(type === 'TV') link = activeAccount.tv || activeAccount.pc || activeAccount.mobile;
 
             document.getElementById('outputLink').value = link || "Link not available";
             
@@ -247,23 +250,73 @@
             showStep('step3');
         }
 
+        // Helper function to process raw text content into account objects
+        function parseTextToAccounts(text) {
+            let lines = text.split('\n');
+            let addedCount = 0;
+            let curPc = "", curMob = "", curTv = "";
+
+            lines.forEach(line => {
+                let l = line.trim();
+                if(l.includes('netflix.com')) {
+                    if(l.includes('/browse')) curPc = l;
+                    else if(l.includes('/unsupported')) curMob = l;
+                    else if(l.includes('/tv8')) curTv = l;
+                    else {
+                        curPc = l; curMob = l; curTv = l;
+                    }
+
+                    if(curPc || curMob || curTv) {
+                        accounts.push({
+                            pc: curPc || curMob || curTv,
+                            mobile: curMob || curPc || curTv,
+                            tv: curTv || curPc || curMob
+                        });
+                        addedCount++;
+                        curPc = ""; curMob = ""; curTv = "";
+                    }
+                }
+            });
+
+            // Fallback for generic http lines if specific routes weren't caught
+            if(addedCount === 0) {
+                lines.forEach(line => {
+                    let l = line.trim();
+                    if(l.startsWith('http')) {
+                        accounts.push({ pc: l, mobile: l, tv: l });
+                        addedCount++;
+                    }
+                });
+            }
+
+            return addedCount;
+        }
+
+        function addSingleAccount() {
+            let text = document.getElementById('singleInputText').value.trim();
+            if(!text) {
+                alert("Pehle link toh enter karein!");
+                return;
+            }
+
+            let count = parseTextToAccounts(text);
+            if(count > 0) {
+                localStorage.setItem('netflix_tokens', JSON.stringify(accounts));
+                renderAdminList();
+                document.getElementById('singleInputText').value = "";
+                alert("Single account successfully add ho gaya!");
+            } else {
+                alert("Invalid link format! Kripya sahi netflix link dalein.");
+            }
+        }
+
         function uploadTxtFile(e) {
             let file = e.target.files[0];
             if(!file) return;
 
             let reader = new FileReader();
             reader.onload = function(event) {
-                let lines = event.target.result.split('\n');
-                let count = 0;
-                
-                lines.forEach(line => {
-                    let l = line.trim();
-                    if(l.startsWith('http')) {
-                        accounts.push({ pc: l, mobile: l, tv: l });
-                        count++;
-                    }
-                });
-
+                let count = parseTextToAccounts(event.target.result);
                 localStorage.setItem('netflix_tokens', JSON.stringify(accounts));
                 renderAdminList();
                 alert(count + " accounts successfully add ho gaye!");
@@ -283,10 +336,11 @@
             }
 
             accounts.forEach((acc, i) => {
+                let displayLink = acc.pc || acc.mobile || acc.tv;
                 list.innerHTML += `
                     <div class="token-item">
                         <div>
-                            <b>#${i+1}</b> <span>${acc.pc.substring(0, 45)}...</span>
+                            <b>#${i+1}</b> <span>${displayLink.substring(0, 40)}...</span>
                         </div>
                         <button class="btn-del" onclick="deleteOne(${i})"><i class="fa-solid fa-trash"></i></button>
                     </div>
@@ -310,7 +364,7 @@
         }
 
         function copyResult() {
-            triggerAds(); // Normal user copy karega toh ad aayega
+            triggerAds(); 
             let box = document.getElementById('outputLink');
             box.select();
             box.setSelectionRange(0, 99999);
