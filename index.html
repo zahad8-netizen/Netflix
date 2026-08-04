@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netflix Token & Device Hub</title>
+    <title>NetflixHub - Premium Access</title>
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -57,17 +57,20 @@
         .device-card i { font-size: 24px; color: var(--primary); margin-bottom: 8px; }
         
         .result-box textarea {
-            width: 100%; height: 90px; margin: 10px 0; padding: 10px;
+            width: 100%; height: 80px; margin: 10px 0; padding: 10px;
             border: 1px solid #ddd; border-radius: 4px; font-family: monospace; font-size: 11px; background: #fafafa;
         }
         
-        .btn-copy { background: #28a745; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: 600; width: 100%; }
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-copy { background: #28a745; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: 600; flex: 1; }
+        .btn-open { background: #007bff; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; text-align: center; flex: 1; font-size: 13px; line-height: 20px;}
+        
         .btn-back { background: #6c757d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 12px; font-size: 12px; }
         
         /* Admin Panel Styles */
         .upload-box { border: 2px dashed #ccc; padding: 15px; text-align: center; border-radius: 6px; cursor: pointer; background: #fafafa; margin-bottom: 15px; }
         .single-add-box { background: #f1f3f5; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
-        .single-add-box textarea { width: 100%; height: 70px; padding: 8px; font-size: 11px; font-family: monospace; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 8px; }
+        .single-add-box textarea { width: 100%; height: 60px; padding: 8px; font-size: 11px; font-family: monospace; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 8px; }
         
         .token-item { background: #fdfdfd; border: 1px solid #eee; padding: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; }
         .token-item span { color: #666; display: block; word-break: break-all; font-size: 10px; }
@@ -120,9 +123,13 @@
                 <button class="btn-back" onclick="showStep('step2')"><i class="fa-solid fa-arrow-left"></i> Back</button>
                 <div style="text-align: center;">
                     <h3 style="color: #28a745; font-size: 16px; margin-bottom: 5px;"><i class="fa-solid fa-circle-check"></i> Ready!</h3>
-                    <p style="font-size: 12px; color: #666;" id="linkTitle">Aapka link:</p>
+                    <p style="font-size: 12px; color: #666;" id="linkTitle">Aapka secure link tayar hai:</p>
                     <textarea id="outputLink" readonly onclick="this.select()"></textarea>
-                    <button class="btn-copy" onclick="copyResult()"><i class="fa-solid fa-copy"></i> Copy Link</button>
+                    
+                    <div class="btn-group">
+                        <button class="btn-copy" onclick="copyResult()"><i class="fa-solid fa-copy"></i> Copy Link</button>
+                        <a id="directOpenBtn" href="#" target="_blank" class="btn-open"><i class="fa-solid fa-external-link-alt"></i> Open Direct</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -132,18 +139,16 @@
             <button class="btn-back" onclick="toggleAdmin()"><i class="fa-solid fa-arrow-left"></i> User Panel</button>
             <h2>Admin Control (<span id="countSpan">0</span> accounts)</h2>
             
-            <!-- Single Link Add Section -->
             <div class="single-add-box">
-                <b style="font-size: 12px; color: #333;"><i class="fa-solid fa-plus"></i> Add Single Account (PC/Mobile/TV links):</b>
+                <b style="font-size: 12px; color: #333;"><i class="fa-solid fa-plus"></i> Add Single Account:</b>
                 <textarea id="singleInputText" placeholder="Yahan PC, Mobile ya TV ke links paste karein..."></textarea>
-                <button class="action-btn" style="margin-top:0; padding:8px; font-size:12px;" onclick="addSingleAccount()">Add Single Account</button>
+                <button class="action-btn" style="margin-top:0; padding:8px; font-size:12px;" onclick="addSingleAccount()">Add Token</button>
             </div>
 
-            <!-- Bulk File Upload Section -->
             <div class="upload-box" onclick="document.getElementById('txtFile').click()">
                 <i class="fa-solid fa-file-arrow-up" style="font-size: 24px; color: var(--primary);"></i><br>
                 <b style="font-size: 13px;">Upload .TXT File Here</b><br>
-                <span style="font-size: 10px; color: #888;">Direct bulk add support (PC, Mobile, TV)</span>
+                <span style="font-size: 10px; color: #888;">Bulk add support</span>
                 <input type="file" id="txtFile" accept=".txt" style="display:none" onchange="uploadTxtFile(event)">
             </div>
 
@@ -152,12 +157,26 @@
                 <button class="btn-del-all" onclick="clearAll()"><i class="fa-solid fa-trash"></i> Delete All</button>
             </div>
             
-            <div id="adminList" style="max-height: 220px; overflow-y: auto;"></div>
+            <div id="adminList" style="max-height: 200px; overflow-y: auto;"></div>
         </div>
     </div>
 
     <script>
-        let accounts = JSON.parse(localStorage.getItem('netflix_tokens')) || [];
+        // Initial / Default Stock Accounts
+        let defaultStock = [
+            {
+                pc: "https://www.netflix.com/browse?nftoken=Bgj8vOvcAxLCAaXlny/lcmuNohdzKeo/9AS7Swtymqfs6Gp/Q+Qjwjmso0Qc1VfTDfSw2PysKvrrmE2o+heX5mIjrIJKicT9Dgx2kOC1pFIfMfsoFptDnatMUCEDUqrx5qizw8bg4SubYo5NSv9CfJtvxlAlljhhHJQUl0h9O1RZxB3UMV+yn3y0yk2U0cnI8ZbECW8fZv5UfZKbExQSuba5FNts8EzdSAUNOEVFkGDuNHnC26J5t3PRvw1e/d3pyF8XV6XW8MRDepBqGAYiDgoM1dgtVpPWUqWhfY56",
+                mobile: "https://www.netflix.com/unsupported?nftoken=Bgj8vOvcAxLCAaXlny/lcmuNohdzKeo/9AS7Swtymqfs6Gp/Q+Qjwjmso0Qc1VfTDfSw2PysKvrrmE2o+heX5mIjrIJKicT9Dgx2kOC1pFIfMfsoFptDnatMUCEDUqrx5qizw8bg4SubYo5NSv9CfJtvxlAlljhhHJQUl0h9O1RZxB3UMV+yn3y0yk2U0cnI8ZbECW8fZv5UfZKbExQSuba5FNts8EzdSAUNOEVFkGDuNHnC26J5t3PRvw1e/d3pyF8XV6XW8MRDepBqGAYiDgoM1dgtVpPWUqWhfY56",
+                tv: "https://www.netflix.com/tv8?nftoken=Bgj8vOvcAxLCAaXlny/lcmuNohdzKeo/9AS7Swtymqfs6Gp/Q+Qjwjmso0Qc1VfTDfSw2PysKvrrmE2o+heX5mIjrIJKicT9Dgx2kOC1pFIfMfsoFptDnatMUCEDUqrx5qizw8bg4SubYo5NSv9CfJtvxlAlljhhHJQUl0h9O1RZxB3UMV+yn3y0yk2U0cnI8ZbECW8fZv5UfZKbExQSuba5FNts8EzdSAUNOEVFkGDuNHnC26J5t3PRvw1e/d3pyF8XV6XW8MRDepBqGAYiDgoM1dgtVpPWUqWhfY56"
+            }
+        ];
+
+        let accounts = JSON.parse(localStorage.getItem('netflix_tokens'));
+        if (!accounts || accounts.length === 0) {
+            accounts = defaultStock;
+            localStorage.setItem('netflix_tokens', JSON.stringify(accounts));
+        }
+
         let activeAccount = null;
 
         function checkAdminSession() {
@@ -165,7 +184,7 @@
         }
 
         function triggerAds() {
-            if (checkAdminSession()) return; 
+            if (checkAdminSession()) return; // Admin ke liye ads disable rahenge
 
             let container = document.getElementById('adScriptContainer');
             container.innerHTML = ""; 
@@ -241,6 +260,7 @@
             else if(type === 'TV') link = activeAccount.tv || activeAccount.pc || activeAccount.mobile;
 
             document.getElementById('outputLink').value = link || "Link not available";
+            document.getElementById('directOpenBtn').setAttribute('href', link);
             
             let idx = accounts.indexOf(activeAccount);
             if(idx > -1) {
@@ -250,7 +270,6 @@
             showStep('step3');
         }
 
-        // Helper function to process raw text content into account objects
         function parseTextToAccounts(text) {
             let lines = text.split('\n');
             let addedCount = 0;
@@ -278,7 +297,6 @@
                 }
             });
 
-            // Fallback for generic http lines if specific routes weren't caught
             if(addedCount === 0) {
                 lines.forEach(line => {
                     let l = line.trim();
@@ -304,9 +322,9 @@
                 localStorage.setItem('netflix_tokens', JSON.stringify(accounts));
                 renderAdminList();
                 document.getElementById('singleInputText').value = "";
-                alert("Single account successfully add ho gaya!");
+                alert("Token successfully add ho gaya!");
             } else {
-                alert("Invalid link format! Kripya sahi netflix link dalein.");
+                alert("Invalid link format!");
             }
         }
 
@@ -340,7 +358,7 @@
                 list.innerHTML += `
                     <div class="token-item">
                         <div>
-                            <b>#${i+1}</b> <span>${displayLink.substring(0, 40)}...</span>
+                            <b>#${i+1}</b> <span>${displayLink.substring(0, 35)}...</span>
                         </div>
                         <button class="btn-del" onclick="deleteOne(${i})"><i class="fa-solid fa-trash"></i></button>
                     </div>
@@ -355,7 +373,7 @@
         }
 
         function clearAll() {
-            if(confirm("Kya aap saare accounts ek sath delete karna chahte hain?")) {
+            if(confirm("Kya aap saare accounts delete karna chahte hain?")) {
                 accounts = [];
                 localStorage.removeItem('netflix_tokens');
                 renderAdminList();
