@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Token & Device Hub</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Dynamic Ad Container -->
+    <div id="adScriptContainer"></div>
+
+    <style>
+        :root {
+            --primary: #E50914;
+            --bg: #f8f9fa;
+            --dark: #141414;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); color: #333; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        
+        header {
+            width: 100%; background: var(--dark); color: white; padding: 12px 25px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        header h1 { color: var(--primary); font-size: 20px; cursor: pointer; }
+        
+        .tg-btn {
+            background: #0088cc; color: white; padding: 6px 12px; border-radius: 4px;
+            text-decoration: none; font-size: 12px; display: inline-flex; align-items: center; gap: 5px;
+        }
+        
+        .container {
+            width: 100%; max-width: 600px; margin: 25px 15px; background: white;
+            padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .panel { display: none; }
+        .panel.active { display: block; }
+        
+        h2 { font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid var(--primary); padding-bottom: 5px; display: inline-block; }
+        
+        .action-btn {
+            background: var(--primary); color: white; border: none; padding: 12px 25px;
+            font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; width: 100%;
+            margin-top: 10px; box-shadow: 0 4px 12px rgba(229, 9, 20, 0.2);
+        }
+        
+        .device-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        @media(max-width: 500px) { .device-grid { grid-template-columns: 1fr; } }
+        
+        .device-card {
+            background: var(--dark); color: white; padding: 15px 10px; border-radius: 6px;
+            text-align: center; cursor: pointer; border: 1px solid var(--primary);
+        }
+        .device-card i { font-size: 24px; color: var(--primary); margin-bottom: 8px; }
+        
+        .result-box textarea {
+            width: 100%; height: 90px; margin: 10px 0; padding: 10px;
+            border: 1px solid #ddd; border-radius: 4px; font-family: monospace; font-size: 11px; background: #fafafa;
+        }
+        
+        .btn-copy { background: #28a745; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: 600; width: 100%; }
+        .btn-back { background: #6c757d; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-bottom: 12px; font-size: 12px; }
+        
+        /* Admin Panel Styles */
+        .upload-box { border: 2px dashed #ccc; padding: 15px; text-align: center; border-radius: 6px; cursor: pointer; background: #fafafa; margin-bottom: 15px; }
+        .token-item { background: #fdfdfd; border: 1px solid #eee; padding: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; }
+        .token-item span { color: #666; display: block; word-break: break-all; font-size: 10px; }
+        .btn-del { background: var(--primary); color: white; border: none; padding: 5px 8px; border-radius: 3px; cursor: pointer; }
+        .btn-del-all { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500; }
+        
+        .flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 onclick="goHome()"><i class="fa-solid fa-play"></i> NetflixHub</h1>
+        <div>
+            <a href="https://t.me/jkflixmoviewatch" target="_blank" class="tg-btn"><i class="fa-brands fa-telegram"></i> Telegram</a>
+            <button onclick="toggleAdmin()" id="adminToggleBtn" class="tg-btn" style="background:#333; border:none; cursor:pointer; margin-left:5px;"><i class="fa-solid fa-lock"></i> Admin</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- USER PANEL -->
+        <div id="userPanel" class="panel active">
+            <div id="step1" style="text-align: center;">
+                <h2>Get Random Netflix Account</h2>
+                <p style="font-size: 13px; color: #666; margin: 10px 0 15px 0;">Click below to instantly generate your private access link.</p>
+                <button class="action-btn" onclick="generateToken()">Generate Token</button>
+            </div>
+
+            <div id="step2" class="hidden">
+                <button class="btn-back" onclick="showStep('step1')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <h2 style="display:block;">Select Your Device</h2>
+                <div class="device-grid">
+                    <div class="device-card" onclick="getDeviceLink('PC')">
+                        <i class="fa-solid fa-desktop"></i>
+                        <h4>PC</h4>
+                    </div>
+                    <div class="device-card" onclick="getDeviceLink('Mobile')">
+                        <i class="fa-solid fa-mobile-screen"></i>
+                        <h4>Mobile</h4>
+                    </div>
+                    <div class="device-card" onclick="getDeviceLink('TV')">
+                        <i class="fa-solid fa-tv"></i>
+                        <h4>TV</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div id="step3" class="hidden">
+                <button class="btn-back" onclick="showStep('step2')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <div style="text-align: center;">
+                    <h3 style="color: #28a745; font-size: 16px; margin-bottom: 5px;"><i class="fa-solid fa-circle-check"></i> Ready!</h3>
+                    <p style="font-size: 12px; color: #666;" id="linkTitle">Aapka link:</p>
+                    <textarea id="outputLink" readonly onclick="this.select()"></textarea>
+                    <button class="btn-copy" onclick="copyResult()"><i class="fa-solid fa-copy"></i> Copy Link</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN PANEL -->
+        <div id="adminPanel" class="panel">
+            <button class="btn-back" onclick="toggleAdmin()"><i class="fa-solid fa-arrow-left"></i> User Panel</button>
+            <h2>Admin Control (<span id="countSpan">0</span> accounts)</h2>
+            
+            <div class="upload-box" onclick="document.getElementById('txtFile').click()">
+                <i class="fa-solid fa-file-arrow-up" style="font-size: 24px; color: var(--primary);"></i><br>
+                <b style="font-size: 13px;">Upload .TXT File Here</b><br>
+                <span style="font-size: 10px; color: #888;">Direct bulk add support</span>
+                <input type="file" id="txtFile" accept=".txt" style="display:none" onchange="uploadTxtFile(event)">
+            </div>
+
+            <div class="flex-between">
+                <b style="font-size: 13px;">Saved Accounts:</b>
+                <button class="btn-del-all" onclick="clearAll()"><i class="fa-solid fa-trash"></i> Delete All</button>
+            </div>
+            
+            <div id="adminList" style="max-height: 250px; overflow-y: auto;"></div>
+        </div>
+    </div>
+    <script>
+        let accounts = JSON.parse(localStorage.getItem('netflix_tokens')) || [];
+        let activeAccount = null;
+
+        // Check if current browser session is logged in as Admin
+        function checkAdminSession() {
+            return sessionStorage.getItem('admin_logged_in') === 'true';
+        }
+
+        // Function to trigger Adsterra ads (Sirf Normal Users ke liye chalega, Admin ke liye nahi)
+        function triggerAds() {
+            if (checkAdminSession()) {
+                // Agar admin logged in hai, toh ads bilkul load nahi honge
+                return; 
+            }
+
+            let container = document.getElementById('adScriptContainer');
+            container.innerHTML = ""; // Clear old ad scripts to trigger fresh click ads
+
+            let script1 = document.createElement('script');
+            script1.src = "https://pl30667971.effectivecpmnetwork.com/98/90/a2/9890a2c8724dcf3e5b0aa9c9b553934e.js";
+            
+            let script2 = document.createElement('script');
+            script2.src = "https://pl30667970.effectivecpmnetwork.com/37/23/ca/3723ca5b50797320db9c28a5aa325337.js";
+
+            container.appendChild(script1);
+            container.appendChild(script2);
+        }
+
+        function toggleAdmin() {
+            let uPanel = document.getElementById('userPanel');
+            let aPanel = document.getElementById('adminPanel');
+            
+            if(uPanel.classList.contains('active')) {
+                // Agar pehle se logged in hai toh direct panel khol do, warna password pucho
+                if(checkAdminSession()) {
+                    openAdminDashboard();
+                    return;
+                }
+
+                let p = prompt("Password enter karein:");
+                if(p === "Aliasgar71") {
+                    // Save admin session in browser memory so ads stay disabled for admin
+                    sessionStorage.setItem('admin_logged_in', 'true');
+                    
+                    // Turant saare active ads hata do jo chal rahe hon
+                    document.getElementById('adScriptContainer').innerHTML = ""; 
+
+                    openAdminDashboard();
+                } else if(p !== null) {
+                    alert("Wrong password!");
+                }
+            } else {
+                aPanel.classList.remove('active');
+                uPanel.classList.add('active');
+                showStep('step1');
+            }
+        }
+
+        function openAdminDashboard() {
+            let uPanel = document.getElementById('userPanel');
+            let aPanel = document.getElementById('adminPanel');
+            uPanel.classList.remove('active');
+            aPanel.classList.add('active');
+            renderAdminList();
+        }
+
+        function showStep(sId) {
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById(sId).classList.remove('hidden');
+        }
+
+        function generateToken() {
+            triggerAds(); // Normal user ke click par ad aayega, admin ke click par nahi
+            if(accounts.length === 0) {
+                alert("Koi account available nahi hai! Pehle admin panel se upload karein.");
+                return;
+            }
+            let index = Math.floor(Math.random() * accounts.length);
+            activeAccount = accounts[index];
+            showStep('step2');
+        }
+
+        function getDeviceLink(type) {
+            triggerAds(); // Normal user ke device selection par ad aayega
+            if(!activeAccount) return;
+            let link = "";
+            if(type === 'PC') link = activeAccount.pc;
+            else if(type === 'Mobile') link = activeAccount.mobile;
+            else if(type === 'TV') link = activeAccount.tv;
+
+            document.getElementById('outputLink').value = link || "Link not available";
+            
+            let idx = accounts.indexOf(activeAccount);
+            if(idx > -1) {
+                accounts.splice(idx, 1);
+                localStorage.setItem('netflix_tokens', JSON.stringify(accounts));
+            }
+            showStep('step3');
+        }
+
+        function uploadTxtFile(e) {
+            let file = e.target.files[0];
+            if(!file) return;
+
+            let reader = new FileReader();
+            reader.onload = function(event) {
+                let lines = event.target.result.split('\n');
+                let count = 0;
+                
+                lines.forEach(line => {
+                    let l = line.trim();
+                    if(l.startsWith('http')) {
+                        accounts.push({ pc: l, mobile: l, tv: l });
+                        count++;
+                    }
+                });
+
+                localStorage.setItem('netflix_tokens', JSON.stringify(accounts));
+                renderAdminList();
+                alert(count + " accounts successfully add ho gaye!");
+            };
+            reader.readAsText(file);
+            e.target.value = "";
+        }
+
+        function renderAdminList() {
+            let list = document.getElementById('adminList');
+            document.getElementById('countSpan').innerText = accounts.length;
+            list.innerHTML = "";
+
+            if(accounts.length === 0) {
+                list.innerHTML = "<p style='text-align:center; color:#888; font-size:11px; padding:15px;'>List khaali hai.</p>";
+                return;
+            }
+
+            accounts.forEach((acc, i) => {
+                list.innerHTML += `
+                    <div class="token-item">
+                        <div>
+                            <b>#${i+1}</b> <span>${acc.pc.substring(0, 45)}...</span>
+                        </div>
+                        <button class="btn-del" onclick="deleteOne(${i})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        function deleteOne(i) {
+            accounts.splice(i, 1);
+            localStorage.setItem('netflix_tokens', JSON.stringify(accounts));
+            renderAdminList();
+        }
+
+        function clearAll() {
+            if(confirm("Kya aap saare accounts ek sath delete karna chahte hain?")) {
+                accounts = [];
+                localStorage.removeItem('netflix_tokens');
+                renderAdminList();
+                alert("Saare accounts delete kar diye gaye hain.");
+            }
+        }
+
+        function copyResult() {
+            triggerAds(); // Normal user copy karega toh ad aayega
+            let box = document.getElementById('outputLink');
+            box.select();
+            box.setSelectionRange(0, 99999);
+            try {
+                navigator.clipboard.writeText(box.value).then(() => {
+                    alert("Link successfully copied!");
+                });
+            } catch(err) {
+                document.execCommand('copy');
+                alert("Link copied!");
+            }
+        }
+
+        function goHome() {
+            showStep('step1');
+        }
+    </script>
+</body>
+</html>
