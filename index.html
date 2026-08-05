@@ -137,11 +137,11 @@
         <!-- ADMIN PANEL -->
         <div id="adminPanel" class="panel">
             <button class="btn-back" onclick="toggleAdmin()"><i class="fa-solid fa-arrow-left"></i> User Panel</button>
-            <h2>Admin Control (<span id="countSpan">0</span> accounts)</h2>
+            <h2>Admin Control (<span id="countSpan">0</span> available)</h2>
             
             <div class="single-add-box">
-                <b style="font-size: 12px; color: #333;"><i class="fa-solid fa-plus"></i> Add Single Account:</b>
-                <textarea id="singleInputText" placeholder="Yahan PC, Mobile ya TV ke links paste karein..."></textarea>
+                <b style="font-size: 12px; color: #333;"><i class="fa-solid fa-plus"></i> Add PC / Mobile / TV Links:</b>
+                <textarea id="singleInputText" placeholder="Yahan sirf netflix.com wale links paste karein..."></textarea>
                 <button class="action-btn" style="margin-top:0; padding:8px; font-size:12px;" onclick="addSingleAccount()">Add Token</button>
             </div>
 
@@ -153,7 +153,7 @@
             </div>
 
             <div class="flex-between">
-                <b style="font-size: 13px;">Saved Accounts:</b>
+                <b style="font-size: 13px;">Saved Accounts Stock:</b>
                 <button class="btn-del-all" onclick="clearAll()"><i class="fa-solid fa-trash"></i> Delete All</button>
             </div>
             
@@ -162,7 +162,7 @@
     </div>
 
     <script>
-        // Initial / Default Stock Accounts
+        // Default Stock Accounts
         let defaultStock = [
             {
                 pc: "https://www.netflix.com/browse?nftoken=Bgj8vOvcAxLCAaXlny/lcmuNohdzKeo/9AS7Swtymqfs6Gp/Q+Qjwjmso0Qc1VfTDfSw2PysKvrrmE2o+heX5mIjrIJKicT9Dgx2kOC1pFIfMfsoFptDnatMUCEDUqrx5qizw8bg4SubYo5NSv9CfJtvxlAlljhhHJQUl0h9O1RZxB3UMV+yn3y0yk2U0cnI8ZbECW8fZv5UfZKbExQSuba5FNts8EzdSAUNOEVFkGDuNHnC26J5t3PRvw1e/d3pyF8XV6XW8MRDepBqGAYiDgoM1dgtVpPWUqWhfY56",
@@ -190,10 +190,10 @@
             container.innerHTML = ""; 
 
             let script1 = document.createElement('script');
-            script1.src = "https://pl30667971.effectivecpmnetwork.com/98/90/a2/9890a2c8724dcf3e5b0aa9c9b553934e.js";
+            script1.src = "https://pl30690282.effectivecpmnetwork.com/b6/e8/b1/b6e8b1d58b7a47edb5779ba40f41882a.js";
             
             let script2 = document.createElement('script');
-            script2.src = "https://pl30667970.effectivecpmnetwork.com/37/23/ca/3723ca5b50797320db9c28a5aa325337.js";
+            script2.src = "https://pl30690283.effectivecpmnetwork.com/95/d4/2c/95d42cda1fd076bc3251f67f38799f18.js";
 
             container.appendChild(script1);
             container.appendChild(script2);
@@ -262,6 +262,7 @@
             document.getElementById('outputLink').value = link || "Link not available";
             document.getElementById('directOpenBtn').setAttribute('href', link);
             
+            // Auto delete token from stock once user takes it
             let idx = accounts.indexOf(activeAccount);
             if(idx > -1) {
                 accounts.splice(idx, 1);
@@ -277,7 +278,7 @@
 
             lines.forEach(line => {
                 let l = line.trim();
-                if(l.includes('netflix.com')) {
+                if(l.includes('netflix.com') && (l.includes('/browse') || l.includes('/unsupported') || l.includes('/tv8') || l.includes('nftoken='))) {
                     if(l.includes('/browse')) curPc = l;
                     else if(l.includes('/unsupported')) curMob = l;
                     else if(l.includes('/tv8')) curTv = l;
@@ -297,16 +298,6 @@
                 }
             });
 
-            if(addedCount === 0) {
-                lines.forEach(line => {
-                    let l = line.trim();
-                    if(l.startsWith('http')) {
-                        accounts.push({ pc: l, mobile: l, tv: l });
-                        addedCount++;
-                    }
-                });
-            }
-
             return addedCount;
         }
 
@@ -322,9 +313,9 @@
                 localStorage.setItem('netflix_tokens', JSON.stringify(accounts));
                 renderAdminList();
                 document.getElementById('singleInputText').value = "";
-                alert("Token successfully add ho gaya!");
+                alert(count + " Netflix Token successfully add ho gaya!");
             } else {
-                alert("Invalid link format!");
+                alert("Invalid format! Sirf valid Netflix PC/Mobile/TV links hi accept honge.");
             }
         }
 
@@ -335,9 +326,13 @@
             let reader = new FileReader();
             reader.onload = function(event) {
                 let count = parseTextToAccounts(event.target.result);
-                localStorage.setItem('netflix_tokens', JSON.stringify(accounts));
-                renderAdminList();
-                alert(count + " accounts successfully add ho gaye!");
+                if(count > 0) {
+                    localStorage.setItem('netflix_tokens', JSON.stringify(accounts));
+                    renderAdminList();
+                    alert(count + " valid Netflix accounts successfully add ho gaye!");
+                } else {
+                    alert("File me koi valid Netflix link nahi mila!");
+                }
             };
             reader.readAsText(file);
             e.target.value = "";
@@ -349,7 +344,7 @@
             list.innerHTML = "";
 
             if(accounts.length === 0) {
-                list.innerHTML = "<p style='text-align:center; color:#888; font-size:11px; padding:15px;'>List khaali hai.</p>";
+                list.innerHTML = "<p style='text-align:center; color:#888; font-size:11px; padding:15px;'>Stock khaali hai. Naye tokens add karein.</p>";
                 return;
             }
 
