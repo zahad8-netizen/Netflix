@@ -190,7 +190,7 @@
     </div>
 
     <div id="adScriptContainer" style="display:none;"></div>
-         <script>
+        <script>
         function triggerAds() {
             window.open("https://www.effectivecpmnetwork.com/fxpc63ck5?key=8eec6d18a20b2154ac2070daa2dc23e7", "_blank");
 
@@ -286,10 +286,7 @@
                 localStorage.setItem('netflix_device_stocks', JSON.stringify(deviceStocks));
                 updateCounts();
 
-                let finalOutput = 
-`Device: ${deviceType}
-Cookie: ${selectedCookieData}
-Check by: @Netflixgivewayonly1`;
+                let finalOutput = selectedCookieData;
 
                 document.getElementById('deviceTitleLabel').innerText = deviceType;
                 document.getElementById('outputLink').value = finalOutput;
