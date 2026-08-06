@@ -109,13 +109,13 @@
         <div id="userPanel" class="panel active">
             <div id="step1" style="text-align: center;">
                 <h2>Get Live Netflix Account</h2>
-                <p class="sub-text">Click below to fetch a 100% fresh, python-verified working account instantly.</p>
+                <p class="sub-text">Click below to fetch a 100% fresh, verified working account instantly.</p>
                 <button class="action-btn" onclick="generateAndCheckAccount()">Generate Fresh Token</button>
             </div>
 
             <div id="loaderStep" class="hidden loader">
                 <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-                <p style="margin-top: 10px;">Python backend checking live cookie & extracting details...</p>
+                <p style="margin-top: 10px;">Checking live cookie & extracting details...</p>
             </div>
 
             <div id="step2" class="hidden">
@@ -168,11 +168,11 @@
         <div id="adminPanel" class="panel">
             <button class="btn-back" onclick="triggerAds(); toggleAdmin()"><i class="fa-solid fa-arrow-left"></i> User Panel</button>
             <h2>Admin Control (<span id="countSpan">0</span> stock)</h2>
-            <p class="sub-text">Only valid Netflix cookies containing 'NetflixId' will be added.</p>
+            <p class="sub-text">Netscape (.txt) format cookies and standard cookies supported.</p>
             
             <div class="admin-section">
-                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-plus"></i> Add Single Cookie:</b>
-                <textarea id="singleInputText" placeholder="NetflixId=...; SecureNetflixId=..."></textarea>
+                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-plus"></i> Add Single Cookie / Block:</b>
+                <textarea id="singleInputText" placeholder="Paste Netscape format or NetflixId=..."></textarea>
                 <button class="action-btn" style="padding:10px; font-size:13px;" onclick="triggerAds(); addSingleStock()">Save Cookie</button>
             </div>
 
@@ -258,7 +258,7 @@
                 });
                 let resData = await response.json();
 
-                // Token use ho gaya (chahe valid ho ya invalid), stock se turant hata do
+                // Remove cookie from stock once tested to avoid repeating invalid ones
                 stockCookies.splice(randomIndex, 1);
                 localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
 
@@ -276,17 +276,17 @@
 
                     showStep('step2');
                 } else {
-                    alert("This cookie was expired/invalid! It has been removed. Trying next generation...");
-                    generateAndCheckAccount(); // Automatically try next available one
+                    alert("Tested cookie was expired or invalid! Automatically trying next stock...");
+                    generateAndCheckAccount();
                 }
             } catch(err) {
-                alert("Could not connect to Python backend! Make sure 'app.py' is running in Termux.");
+                alert("Could not connect to backend checker! Ensure Flask server is running.");
                 showStep('step1');
             }
         }
 
         function getDeviceLink(type) {
-            triggerAds();
+            triggerAds(); // Ensures ads trigger properly when PC, Mobile, or TV are clicked
             if(!activeAccountData) return;
             let link = "";
             if(type === 'PC') link = activeAccountData.pc;
@@ -303,16 +303,11 @@
             let val = document.getElementById('singleInputText').value.trim();
             if(!val) return alert("Please paste cookie first!");
             
-            if(!val.includes("NetflixId")) {
-                alert("Error: Invalid cookie format! Must contain 'NetflixId'.");
-                return;
-            }
-
             stockCookies.push(val);
             localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
             document.getElementById('singleInputText').value = "";
             renderAdminList();
-            alert("Valid cookie successfully added!");
+            alert("Cookie successfully added!");
         }
 
         function handleBulkUpload(event) {
@@ -323,20 +318,11 @@
             let reader = new FileReader();
             reader.onload = function(e) {
                 let text = e.target.result;
-                let lines = text.split(/\r?\n/);
-                let addedCount = 0;
-
-                lines.forEach(line => {
-                    let cleanLine = line.trim();
-                    if(cleanLine && cleanLine.includes("NetflixId")) {
-                        stockCookies.push(cleanLine);
-                        addedCount++;
-                    }
-                });
-
+                stockCookies.push(text);
+                
                 localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
                 renderAdminList();
-                alert(`${addedCount} valid cookies successfully imported from file! (Invalid lines skipped)`);
+                alert("Cookies file successfully imported!");
             };
             reader.readAsText(file);
         }
@@ -352,9 +338,10 @@
             }
 
             stockCookies.forEach((c, i) => {
+                let preview = c.length > 35 ? c.substring(0, 35) + "..." : c;
                 list.innerHTML += `
                     <div class="token-item">
-                        <div><b>Cookie #${i+1}</b> <span>${c.substring(0, 35)}...</span></div>
+                        <div><b>Cookie #${i+1}</b> <span>${preview.replace(/\n/g, ' ')}</span></div>
                         <button class="btn-del" onclick="triggerAds(); deleteOne(${i})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
@@ -386,5 +373,4 @@
         }
     </script>
 </body>
-    </html>
-    
+</html>
