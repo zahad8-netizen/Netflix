@@ -62,14 +62,8 @@
         .device-card i { font-size: 28px; color: var(--primary); margin-bottom: 10px; }
         .device-card h4 { font-size: 14px; }
         
-        .details-box {
-            background: #121212; border: 1px solid #333; border-radius: 8px; padding: 15px; margin-bottom: 20px; text-align: left;
-        }
-        .details-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px solid #222; }
-        .details-row span:last-child { font-weight: 600; color: #46d369; }
-        
         .result-box {
-            width: 100%; height: 95px; margin: 10px 0; padding: 10px;
+            width: 100%; height: 110px; margin: 10px 0; padding: 10px;
             border: 1px solid #444; border-radius: 6px; font-family: monospace; font-size: 11px; background: #000; color: #00ffcc; resize: none;
         }
         
@@ -80,9 +74,7 @@
         .btn-back { background: #444; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; margin-bottom: 15px; font-size: 12px; }
         
         .admin-section { background: #222; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333; }
-        .admin-section textarea { width: 100%; height: 70px; padding: 10px; font-size: 11px; font-family: monospace; border: 1px solid #444; border-radius: 6px; background: #000; color: #fff; margin-bottom: 10px; }
-        .file-upload-box { border: 2px dashed #444; padding: 15px; text-align: center; border-radius: 6px; cursor: pointer; background: #181818; margin-bottom: 10px; }
-        .file-upload-box input { display: none; }
+        .admin-section textarea { width: 100%; height: 80px; padding: 10px; font-size: 11px; font-family: monospace; border: 1px solid #444; border-radius: 6px; background: #000; color: #fff; margin-bottom: 10px; }
         
         .token-item { background: #222; border: 1px solid #333; padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
         .token-item span { color: var(--gray); display: block; word-break: break-all; font-size: 10px; }
@@ -109,57 +101,48 @@
         <!-- USER PANEL -->
         <div id="userPanel" class="panel active">
             <div id="step1" style="text-align: center;">
-                <h2>Get Live Netflix Account</h2>
-                <p class="sub-text">Click below to fetch a 100% fresh, verified working account instantly.</p>
-                <button class="action-btn" onclick="generateAndCheckAccount()">Generate Fresh Token</button>
+                <h2>Get Live Netflix Cookie</h2>
+                <p class="sub-text">Click below to generate a fresh working Netflix cookie instantly.</p>
+                <button class="action-btn" onclick="generateCookie()">Generate Cookie</button>
             </div>
 
             <div id="loaderStep" class="hidden loader">
                 <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-                <p style="margin-top: 10px;">Checking live cookie & extracting details...</p>
+                <p style="margin-top: 10px;">Processing cookie...</p>
             </div>
 
+            <!-- STEP 2: DEVICE SELECTION -->
             <div id="step2" class="hidden">
                 <button class="btn-back" onclick="triggerAds(); showStep('step1')"><i class="fa-solid fa-arrow-left"></i> Back</button>
                 <h2>Select Your Device</h2>
-                <p class="sub-text">Account verified successfully! Choose your device type below:</p>
+                <p class="sub-text">Cookie generated successfully! Choose your device type below:</p>
                 <div class="device-grid">
-                    <div class="device-card" onclick="getDeviceLink('PC')">
+                    <div class="device-card" onclick="selectDevice('PC')">
                         <i class="fa-solid fa-desktop"></i>
                         <h4>PC / Laptop</h4>
                     </div>
-                    <div class="device-card" onclick="getDeviceLink('Mobile')">
+                    <div class="device-card" onclick="selectDevice('Mobile')">
                         <i class="fa-solid fa-mobile-screen"></i>
                         <h4>Mobile</h4>
                     </div>
-                    <div class="device-card" onclick="getDeviceLink('TV')">
+                    <div class="device-card" onclick="selectDevice('TV')">
                         <i class="fa-solid fa-tv"></i>
                         <h4>Smart TV</h4>
                     </div>
                 </div>
             </div>
 
+            <!-- STEP 3: FINAL OUTPUT & DIRECT OPEN -->
             <div id="step3" class="hidden">
                 <button class="btn-back" onclick="triggerAds(); showStep('step2')"><i class="fa-solid fa-arrow-left"></i> Back</button>
                 <div style="text-align: center;">
-                    <h3 style="color: #46d369; font-size: 18px; margin-bottom: 10px;"><i class="fa-solid fa-circle-check"></i> Account Ready!</h3>
+                    <h3 style="color: #46d369; font-size: 18px; margin-bottom: 10px;"><i class="fa-solid fa-circle-check"></i> Ready to Open!</h3>
                     
-                    <div class="details-box" id="accountDetailsBox">
-                        <div class="details-row"><span>User Name:</span> <span id="detName">-</span></div>
-                        <div class="details-row"><span>Email:</span> <span id="detEmail">-</span></div>
-                        <div class="details-row"><span>Country:</span> <span id="detCountry">-</span></div>
-                        <div class="details-row"><span>Plan Name:</span> <span id="detPlan">-</span></div>
-                        <div class="details-row"><span>Price:</span> <span id="detPrice">-</span></div>
-                        <div class="details-row"><span>Video Quality:</span> <span id="detQuality">-</span></div>
-                        <div class="details-row"><span>Max Streams:</span> <span id="detStreams">-</span></div>
-                        <div class="details-row"><span>Billing / Expiry:</span> <span id="detExpiry" style="color: #ffcc00;">-</span></div>
-                    </div>
-
                     <textarea id="outputLink" class="result-box" readonly onclick="this.select()"></textarea>
                     
                     <div class="btn-group">
-                        <button class="btn-copy" onclick="triggerAds(); copyResult()"><i class="fa-solid fa-copy"></i> Copy Link</button>
-                        <a id="directOpenBtn" href="#" target="_blank" class="btn-open" onclick="triggerAds()"><i class="fa-solid fa-external-link-alt"></i> Open Direct</a>
+                        <button class="btn-copy" onclick="triggerAds(); copyResult()"><i class="fa-solid fa-copy"></i> Copy Cookie</button>
+                        <a id="directOpenBtn" href="https://www.netflix.com" target="_blank" class="btn-open" onclick="triggerAds()"><i class="fa-solid fa-external-link-alt"></i> Open Direct</a>
                     </div>
                     
                     <div class="footer-channel">
@@ -173,21 +156,12 @@
         <div id="adminPanel" class="panel">
             <button class="btn-back" onclick="triggerAds(); toggleAdmin()"><i class="fa-solid fa-arrow-left"></i> User Panel</button>
             <h2>Admin Control (<span id="countSpan">0</span> stock)</h2>
-            <p class="sub-text">Netscape (.txt) format cookies and standard cookies supported.</p>
+            <p class="sub-text">Add your Netflix cookies stock here.</p>
             
             <div class="admin-section">
-                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-plus"></i> Add Single Cookie / Block:</b>
-                <textarea id="singleInputText" placeholder="Paste Netscape format or NetflixId=..."></textarea>
+                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-plus"></i> Add Cookie:</b>
+                <textarea id="singleInputText" placeholder="Paste Netflix cookie here..."></textarea>
                 <button class="action-btn" style="padding:10px; font-size:13px;" onclick="triggerAds(); addSingleStock()">Save Cookie</button>
-            </div>
-
-            <div class="admin-section">
-                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-file-arrow-up"></i> Bulk Upload (.TXT File):</b>
-                <label class="file-upload-box" style="display: block; margin-top: 8px;">
-                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: var(--primary);"></i>
-                    <p style="font-size: 11px; color: var(--gray); margin-top: 5px;">Click to select .txt file containing cookies</p>
-                    <input type="file" id="bulkFile" accept=".txt" onchange="handleBulkUpload(event)">
-                </label>
             </div>
 
             <div class="flex-between">
@@ -195,10 +169,11 @@
                 <button class="btn-del-all" onclick="triggerAds(); clearAll()"><i class="fa-solid fa-trash"></i> Delete All Stock</button>
             </div>
             
-            <div id="adminList" style="max-height: 180px; overflow-y: auto;"></div>
+            <div id="adminList" style="max-height: 200px; overflow-y: auto;"></div>
         </div>
     </div>
-        <script>
+
+    <script>
         function triggerAds() {
             let container = document.getElementById('adScriptContainer');
             container.innerHTML = ""; 
@@ -211,7 +186,7 @@
         }
 
         let stockCookies = JSON.parse(localStorage.getItem('netflix_raw_cookies')) || [];
-        let activeAccountData = null;
+        let selectedCookieData = "";
 
         function toggleAdmin() {
             triggerAds();
@@ -242,7 +217,7 @@
             document.getElementById(sId).classList.remove('hidden');
         }
 
-        async function generateAndCheckAccount() {
+        function generateCookie() {
             triggerAds();
             if(stockCookies.length === 0) {
                 alert("Stock is empty! Please go to Admin panel and add cookies first.");
@@ -251,67 +226,25 @@
 
             showStep('loaderStep');
 
-            let randomIndex = Math.floor(Math.random() * stockCookies.length);
-            let cookieToTest = stockCookies[randomIndex];
-
-            try {
-                let response = await fetch('http://localhost:5000/check', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cookie: cookieToTest })
-                });
-                
-                if (!response.ok) {
-                    throw new Error("Server response failed");
-                }
-
-                let resData = await response.json();
-
-                stockCookies.splice(randomIndex, 1);
-                localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
-
-                if(resData.status === 'success') {
-                    activeAccountData = resData.data;
-                    
-                    document.getElementById('detName').innerText = activeAccountData.name;
-                    document.getElementById('detEmail').innerText = activeAccountData.email;
-                    document.getElementById('detCountry').innerText = activeAccountData.country + " (" + activeAccountData.country_code + ")";
-                    document.getElementById('detPlan').innerText = activeAccountData.plan;
-                    document.getElementById('detPrice').innerText = activeAccountData.price;
-                    document.getElementById('detQuality').innerText = activeAccountData.quality;
-                    document.getElementById('detStreams').innerText = activeAccountData.streams + " Screens";
-                    document.getElementById('detExpiry').innerText = activeAccountData.next_billing;
-
-                    showStep('step2');
-                } else {
-                    alert("Tested cookie was expired or invalid! Trying next stock automatically...");
-                    generateAndCheckAccount();
-                }
-            } catch(err) {
-                alert("Connection failed! Make sure your Python Flask backend is running on http://localhost:5000");
-                showStep('step1');
-            }
+            setTimeout(() => {
+                let randomIndex = Math.floor(Math.random() * stockCookies.length);
+                selectedCookieData = stockCookies[randomIndex];
+                showStep('step2');
+            }, 800);
         }
 
-        function getDeviceLink(type) {
-            triggerAds(); 
-            if(!activeAccountData) return;
-            let link = "";
-            if(type === 'PC') link = activeAccountData.pc;
-            else if(type === 'Mobile') link = activeAccountData.mobile;
-            else if(type === 'TV') link = activeAccountData.tv;
-
-            let formattedOutput = 
-`Email: ${activeAccountData.email}
-Country: ${activeAccountData.country_code}
-Plan: ${activeAccountData.plan}
-Price: ${activeAccountData.price}
-Next Billing: ${activeAccountData.next_billing}
-Login Link (${type}): ${link}
+        function selectDevice(deviceType) {
+            triggerAds();
+            let finalOutput = 
+`Device: ${deviceType}
+Cookie: ${selectedCookieData}
 Check by: @Netflixgivewayonly1`;
 
-            document.getElementById('outputLink').value = formattedOutput;
-            document.getElementById('directOpenBtn').setAttribute('href', link);
+            document.getElementById('outputLink').value = finalOutput;
+            
+            // Direct open link setup to Netflix official site
+            document.getElementById('directOpenBtn').setAttribute('href', 'https://www.netflix.com');
+            
             showStep('step3');
         }
 
@@ -325,47 +258,6 @@ Check by: @Netflixgivewayonly1`;
             document.getElementById('singleInputText').value = "";
             renderAdminList();
             alert("Cookie successfully added!");
-        }
-
-        function handleBulkUpload(event) {
-            triggerAds();
-            let file = event.target.files[0];
-            if(!file) return;
-
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                let text = e.target.result;
-                let lines = text.split(/\r?\n/);
-                let currentCookieBlock = "";
-                let countAdded = 0;
-
-                lines.forEach(line => {
-                    if (line.includes("NetflixId") || line.includes(".netflix.com")) {
-                        if (currentCookieBlock.trim().length > 20) {
-                            stockCookies.push(currentCookieBlock.trim());
-                            countAdded++;
-                        }
-                        currentCookieBlock = line + "\n";
-                    } else {
-                        currentCookieBlock += line + "\n";
-                    }
-                });
-
-                if (currentCookieBlock.trim().length > 20) {
-                    stockCookies.push(currentCookieBlock.trim());
-                    countAdded++;
-                }
-
-                if (countAdded === 0 && text.trim().length > 10) {
-                    stockCookies.push(text.trim());
-                    countAdded = 1;
-                }
-
-                localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
-                renderAdminList();
-                alert(countAdded + " cookies successfully imported!");
-            };
-            reader.readAsText(file);
         }
 
         function renderAdminList() {
@@ -410,7 +302,7 @@ Check by: @Netflixgivewayonly1`;
             let box = document.getElementById('outputLink');
             box.select();
             navigator.clipboard.writeText(box.value);
-            alert("Details & Link successfully copied!");
+            alert("Cookie successfully copied!");
         }
     </script>
 </body>
