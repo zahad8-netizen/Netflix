@@ -85,6 +85,8 @@
         .hidden { display: none !important; }
         .loader { text-align: center; color: var(--primary); font-size: 14px; margin: 15px 0; }
         .footer-channel { margin-top: 15px; font-size: 12px; color: var(--gray); text-align: center; }
+        
+        .ad-banner-box { width: 100%; text-align: center; margin: 15px 0; min-height: 50px; }
     </style>
 </head>
 <body>
@@ -93,14 +95,15 @@
         <h1 onclick="triggerAds(); showStep('step1')"><i class="fa-solid fa-play"></i> NetflixHub</h1>
         <div>
             <a href="https://t.me/Netflixgivewayonly1" target="_blank" class="tg-btn" onclick="triggerAds()"><i class="fa-brands fa-telegram"></i> Telegram</a>
-            <button onclick="triggerAds(); toggleAdmin()" id="adminToggleBtn" class="tg-btn" style="background:#222; border:1px solid #444; cursor:pointer; margin-left:5px;"><i class="fa-solid fa-lock"></i> Admin</button>
+            <button onclick="toggleAdmin()" id="adminToggleBtn" class="tg-btn" style="background:#222; border:1px solid #444; cursor:pointer; margin-left:5px;"><i class="fa-solid fa-lock"></i> Admin</button>
         </div>
     </header>
 
     <div class="container">
+        <div class="ad-banner-box" id="bannerAdContainer1"></div>
+
         <!-- USER PANEL -->
         <div id="userPanel" class="panel active">
-            <!-- STEP 1: SELECT DEVICE FIRST -->
             <div id="step1">
                 <h2>Select Your Device</h2>
                 <p class="sub-text">Choose your device type to get a unique separate stock cookie:</p>
@@ -125,7 +128,6 @@
                 <p style="margin-top: 10px;">Fetching unique token for your device...</p>
             </div>
 
-            <!-- STEP 2: FINAL OUTPUT & DIRECT OPEN -->
             <div id="step2" class="hidden">
                 <button class="btn-back" onclick="triggerAds(); showStep('step1'); updateCounts();"><i class="fa-solid fa-arrow-left"></i> Back</button>
                 <div style="text-align: center;">
@@ -134,7 +136,7 @@
                     <textarea id="outputLink" class="result-box" readonly onclick="this.select()"></textarea>
                     
                     <div class="btn-group">
-                        <button class="btn-copy" onclick="triggerAds(); copyResult()"><i class="fa-solid fa-copy"></i> Copy Cookie</button>
+                        <button class="btn-copy" onclick="copyResult()"><i class="fa-solid fa-copy"></i> Copy Cookie</button>
                         <a id="directOpenBtn" href="https://www.netflix.com" target="_blank" class="btn-open" onclick="triggerAds()"><i class="fa-solid fa-external-link-alt"></i> Open Direct</a>
                     </div>
                     
@@ -183,12 +185,12 @@
             
             <div id="adminList" style="max-height: 180px; overflow-y: auto;"></div>
         </div>
+
+        <div class="ad-banner-box" id="bannerAdContainer2" style="margin-top:20px;"></div>
     </div>
 
-    <!-- Ad container -->
-    <div id="adScriptContainer"></div>
-
-    <script>
+    <div id="adScriptContainer" style="display:none;"></div>
+         <script>
         function triggerAds() {
             window.open("https://www.effectivecpmnetwork.com/fxpc63ck5?key=8eec6d18a20b2154ac2070daa2dc23e7", "_blank");
 
@@ -203,9 +205,27 @@
             
             container.appendChild(script1);
             container.appendChild(script2);
+
+            loadBannerAds();
         }
 
-        // Separate stock object for PC, Mobile, and TV
+        function loadBannerAds() {
+            let box1 = document.getElementById('bannerAdContainer1');
+            let box2 = document.getElementById('bannerAdContainer2');
+            
+            if(box1 && box1.innerHTML === "") {
+                let bScript1 = document.createElement('script');
+                bScript1.src = "https://pl30690282.effectivecpmnetwork.com/b6/e8/b1/b6e8b1d58b7a47edb5779ba40f41882a.js";
+                box1.appendChild(bScript1);
+            }
+            
+            if(box2 && box2.innerHTML === "") {
+                let bScript2 = document.createElement('script');
+                bScript2.src = "https://pl30690283.effectivecpmnetwork.com/95/d4/2c/95d42cda1fd076bc3251f67f38799f18.js";
+                box2.appendChild(bScript2);
+            }
+        }
+
         let deviceStocks = JSON.parse(localStorage.getItem('netflix_device_stocks')) || {
             PC: [],
             Mobile: [],
@@ -260,7 +280,6 @@
             showStep('loaderStep');
 
             setTimeout(() => {
-                // Alag alag stock me se specific device ka token nikal kar auto-delete (consume) karega
                 let randomIndex = Math.floor(Math.random() * deviceStocks[deviceType].length);
                 let selectedCookieData = deviceStocks[deviceType].splice(randomIndex, 1)[0];
                 
@@ -384,14 +403,17 @@ Check by: @Netflixgivewayonly1`;
         }
 
         function copyResult() {
+            triggerAds();
             let box = document.getElementById('outputLink');
             box.select();
             navigator.clipboard.writeText(box.value);
             alert("Cookie successfully copied!");
         }
 
-        // Initialize counts on load
         updateCounts();
+        window.onload = function() {
+            loadBannerAds();
+        };
     </script>
 </body>
 </html>
