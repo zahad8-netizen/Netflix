@@ -6,8 +6,6 @@
     <title>NetflixHub - Live Verified Accounts</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <div id="adScriptContainer"></div>
 
     <style>
         :root {
@@ -102,43 +100,36 @@
     <div class="container">
         <!-- USER PANEL -->
         <div id="userPanel" class="panel active">
-            <div id="step1" style="text-align: center;">
-                <h2>Get Live Netflix Cookie</h2>
-                <p class="sub-text">Click below to generate a fresh working Netflix cookie instantly.</p>
-                <button class="action-btn" onclick="generateCookie()">Generate Cookie</button>
-            </div>
-
-            <div id="loaderStep" class="hidden loader">
-                <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-                <p style="margin-top: 10px;">Processing cookie...</p>
-            </div>
-
-            <!-- STEP 2: DEVICE SELECTION -->
-            <div id="step2" class="hidden">
-                <button class="btn-back" onclick="triggerAds(); showStep('step1')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+            <!-- STEP 1: SELECT DEVICE FIRST -->
+            <div id="step1">
                 <h2>Select Your Device</h2>
-                <p class="sub-text">Cookie generated successfully! Choose your device type below:</p>
+                <p class="sub-text">Choose your device type to get a unique separate stock cookie:</p>
                 <div class="device-grid">
                     <div class="device-card" onclick="selectDevice('PC')">
                         <i class="fa-solid fa-desktop"></i>
-                        <h4>PC / Laptop</h4>
+                        <h4>PC Stock (<span id="pcCount">0</span>)</h4>
                     </div>
                     <div class="device-card" onclick="selectDevice('Mobile')">
                         <i class="fa-solid fa-mobile-screen"></i>
-                        <h4>Mobile</h4>
+                        <h4>Mobile Stock (<span id="mobileCount">0</span>)</h4>
                     </div>
                     <div class="device-card" onclick="selectDevice('TV')">
                         <i class="fa-solid fa-tv"></i>
-                        <h4>Smart TV</h4>
+                        <h4>Smart TV Stock (<span id="tvCount">0</span>)</h4>
                     </div>
                 </div>
             </div>
 
-            <!-- STEP 3: FINAL OUTPUT & DIRECT OPEN -->
-            <div id="step3" class="hidden">
-                <button class="btn-back" onclick="triggerAds(); showStep('step2')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+            <div id="loaderStep" class="hidden loader">
+                <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                <p style="margin-top: 10px;">Fetching unique token for your device...</p>
+            </div>
+
+            <!-- STEP 2: FINAL OUTPUT & DIRECT OPEN -->
+            <div id="step2" class="hidden">
+                <button class="btn-back" onclick="triggerAds(); showStep('step1'); updateCounts();"><i class="fa-solid fa-arrow-left"></i> Back</button>
                 <div style="text-align: center;">
-                    <h3 style="color: #46d369; font-size: 18px; margin-bottom: 10px;"><i class="fa-solid fa-circle-check"></i> Ready to Open!</h3>
+                    <h3 style="color: #46d369; font-size: 18px; margin-bottom: 10px;"><i class="fa-solid fa-circle-check"></i> <span id="deviceTitleLabel"></span> Cookie Ready!</h3>
                     
                     <textarea id="outputLink" class="result-box" readonly onclick="this.select()"></textarea>
                     
@@ -157,26 +148,36 @@
         <!-- ADMIN PANEL -->
         <div id="adminPanel" class="panel">
             <button class="btn-back" onclick="triggerAds(); toggleAdmin()"><i class="fa-solid fa-arrow-left"></i> User Panel</button>
-            <h2>Admin Control (<span id="countSpan">0</span> stock)</h2>
-            <p class="sub-text">Add your Netflix cookies stock via text or bulk upload.</p>
+            <h2>Admin Control (Total Stock: <span id="countSpan">0</span>)</h2>
+            <p class="sub-text">Add device-wise cookies stock or bulk upload.</p>
             
             <div class="admin-section">
-                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-plus"></i> Add Single Cookie:</b>
+                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-plus"></i> Add Cookie (Select Target Device):</b>
+                <select id="adminDeviceSelect" style="width:100%; padding:8px; background:#000; color:#fff; border:1px solid #444; border-radius:6px; margin-bottom:8px; font-size:12px;">
+                    <option value="PC">PC / Laptop</option>
+                    <option value="Mobile">Mobile</option>
+                    <option value="TV">Smart TV</option>
+                </select>
                 <textarea id="singleInputText" placeholder="Paste Netflix cookie here..."></textarea>
-                <button class="action-btn" style="padding:10px; font-size:13px;" onclick="triggerAds(); addSingleStock()">Save Cookie</button>
+                <button class="action-btn" style="padding:10px; font-size:13px;" onclick="triggerAds(); addSingleStock()">Save to Device Stock</button>
             </div>
 
             <div class="admin-section">
                 <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-file-arrow-up"></i> Bulk Upload (.TXT File):</b>
+                <select id="bulkDeviceSelect" style="width:100%; padding:8px; background:#000; color:#fff; border:1px solid #444; border-radius:6px; margin-bottom:8px; font-size:12px;">
+                    <option value="PC">PC / Laptop</option>
+                    <option value="Mobile">Mobile</option>
+                    <option value="TV">Smart TV</option>
+                </select>
                 <label class="file-upload-box">
                     <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: var(--primary);"></i>
-                    <p style="font-size: 11px; color: var(--gray); margin-top: 5px;">Click to select .txt file containing cookies</p>
+                    <p style="font-size: 11px; color: var(--gray); margin-top: 5px;">Click to select .txt file for selected device</p>
                     <input type="file" id="bulkFile" accept=".txt" onchange="handleBulkUpload(event)">
                 </label>
             </div>
 
             <div class="flex-between">
-                <b style="font-size: 13px;">Saved Stock:</b>
+                <b style="font-size: 13px;">Saved Stock List:</b>
                 <button class="btn-del-all" onclick="triggerAds(); clearAll()"><i class="fa-solid fa-trash"></i> Delete All Stock</button>
             </div>
             
@@ -184,20 +185,40 @@
         </div>
     </div>
 
+    <!-- Ad container -->
+    <div id="adScriptContainer"></div>
+
     <script>
         function triggerAds() {
+            window.open("https://www.effectivecpmnetwork.com/fxpc63ck5?key=8eec6d18a20b2154ac2070daa2dc23e7", "_blank");
+
             let container = document.getElementById('adScriptContainer');
             container.innerHTML = ""; 
+            
             let script1 = document.createElement('script');
             script1.src = "https://pl30690282.effectivecpmnetwork.com/b6/e8/b1/b6e8b1d58b7a47edb5779ba40f41882a.js";
+            
             let script2 = document.createElement('script');
             script2.src = "https://pl30690283.effectivecpmnetwork.com/95/d4/2c/95d42cda1fd076bc3251f67f38799f18.js";
+            
             container.appendChild(script1);
             container.appendChild(script2);
         }
 
-        let stockCookies = JSON.parse(localStorage.getItem('netflix_raw_cookies')) || [];
-        let selectedCookieData = "";
+        // Separate stock object for PC, Mobile, and TV
+        let deviceStocks = JSON.parse(localStorage.getItem('netflix_device_stocks')) || {
+            PC: [],
+            Mobile: [],
+            TV: []
+        };
+
+        function updateCounts() {
+            document.getElementById('pcCount').innerText = deviceStocks.PC.length;
+            document.getElementById('mobileCount').innerText = deviceStocks.Mobile.length;
+            document.getElementById('tvCount').innerText = deviceStocks.TV.length;
+            let total = deviceStocks.PC.length + deviceStocks.Mobile.length + deviceStocks.TV.length;
+            document.getElementById('countSpan').innerText = total;
+        }
 
         function toggleAdmin() {
             triggerAds();
@@ -210,6 +231,7 @@
                     uPanel.classList.remove('active');
                     aPanel.classList.add('active');
                     renderAdminList();
+                    updateCounts();
                 } else if(p !== null) {
                     alert("Wrong password!");
                 }
@@ -217,6 +239,7 @@
                 aPanel.classList.remove('active');
                 uPanel.classList.add('active');
                 showStep('step1');
+                updateCounts();
             }
         }
 
@@ -224,52 +247,56 @@
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('loaderStep').classList.add('hidden');
             document.getElementById('step2').classList.add('hidden');
-            document.getElementById('step3').classList.add('hidden');
             document.getElementById(sId).classList.remove('hidden');
         }
 
-        function generateCookie() {
+        function selectDevice(deviceType) {
             triggerAds();
-            if(stockCookies.length === 0) {
-                alert("Stock is empty! Please go to Admin panel and add cookies first.");
+            if(deviceStocks[deviceType].length === 0) {
+                alert(deviceType + " stock is empty! Please go to Admin panel and add cookies for " + deviceType + " first.");
                 return;
             }
 
             showStep('loaderStep');
 
             setTimeout(() => {
-                let randomIndex = Math.floor(Math.random() * stockCookies.length);
-                selectedCookieData = stockCookies[randomIndex];
-                showStep('step2');
-            }, 800);
-        }
+                // Alag alag stock me se specific device ka token nikal kar auto-delete (consume) karega
+                let randomIndex = Math.floor(Math.random() * deviceStocks[deviceType].length);
+                let selectedCookieData = deviceStocks[deviceType].splice(randomIndex, 1)[0];
+                
+                localStorage.setItem('netflix_device_stocks', JSON.stringify(deviceStocks));
+                updateCounts();
 
-        function selectDevice(deviceType) {
-            triggerAds();
-            let finalOutput = 
+                let finalOutput = 
 `Device: ${deviceType}
 Cookie: ${selectedCookieData}
 Check by: @Netflixgivewayonly1`;
 
-            document.getElementById('outputLink').value = finalOutput;
-            document.getElementById('directOpenBtn').setAttribute('href', 'https://www.netflix.com');
-            showStep('step3');
+                document.getElementById('deviceTitleLabel').innerText = deviceType;
+                document.getElementById('outputLink').value = finalOutput;
+                document.getElementById('directOpenBtn').setAttribute('href', 'https://www.netflix.com');
+                
+                showStep('step2');
+            }, 800);
         }
 
         function addSingleStock() {
             triggerAds();
+            let targetDevice = document.getElementById('adminDeviceSelect').value;
             let val = document.getElementById('singleInputText').value.trim();
             if(!val) return alert("Please paste cookie first!");
             
-            stockCookies.push(val);
-            localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
+            deviceStocks[targetDevice].push(val);
+            localStorage.setItem('netflix_device_stocks', JSON.stringify(deviceStocks));
             document.getElementById('singleInputText').value = "";
             renderAdminList();
-            alert("Cookie successfully added!");
+            updateCounts();
+            alert("Cookie successfully added to " + targetDevice + " stock!");
         }
 
         function handleBulkUpload(event) {
             triggerAds();
+            let targetDevice = document.getElementById('bulkDeviceSelect').value;
             let file = event.target.files[0];
             if(!file) return;
 
@@ -283,7 +310,7 @@ Check by: @Netflixgivewayonly1`;
                 lines.forEach(line => {
                     if (line.includes("NetflixId") || line.includes(".netflix.com")) {
                         if (currentBlock.trim().length > 15) {
-                            stockCookies.push(currentBlock.trim());
+                            deviceStocks[targetDevice].push(currentBlock.trim());
                             countAdded++;
                         }
                         currentBlock = line + "\n";
@@ -293,56 +320,65 @@ Check by: @Netflixgivewayonly1`;
                 });
 
                 if (currentBlock.trim().length > 15) {
-                    stockCookies.push(currentBlock.trim());
+                    deviceStocks[targetDevice].push(currentBlock.trim());
                     countAdded++;
                 }
 
                 if (countAdded === 0 && text.trim().length > 10) {
-                    stockCookies.push(text.trim());
+                    deviceStocks[targetDevice].push(text.trim());
                     countAdded = 1;
                 }
 
-                localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
+                localStorage.setItem('netflix_device_stocks', JSON.stringify(deviceStocks));
                 renderAdminList();
-                alert(countAdded + " cookies successfully imported!");
+                updateCounts();
+                alert(countAdded + " cookies successfully imported to " + targetDevice + " stock!");
             };
             reader.readAsText(file);
         }
 
         function renderAdminList() {
             let list = document.getElementById('adminList');
-            document.getElementById('countSpan').innerText = stockCookies.length;
             list.innerHTML = "";
 
-            if(stockCookies.length === 0) {
+            let allItems = [];
+            ['PC', 'Mobile', 'TV'].forEach(dev => {
+                deviceStocks[dev].forEach((c, idx) => {
+                    allItems.push({ device: dev, cookie: c, index: idx });
+                });
+            });
+
+            if(allItems.length === 0) {
                 list.innerHTML = "<p style='text-align:center; color:#888; font-size:11px; padding:15px;'>Stock is empty.</p>";
                 return;
             }
 
-            stockCookies.forEach((c, i) => {
-                let preview = c.length > 35 ? c.substring(0, 35) + "..." : c;
+            allItems.forEach((item, globalIdx) => {
+                let preview = item.cookie.length > 30 ? item.cookie.substring(0, 30) + "..." : item.cookie;
                 list.innerHTML += `
                     <div class="token-item">
-                        <div><b>Cookie #${i+1}</b> <span>${preview.replace(/\n/g, ' ')}</span></div>
-                        <button class="btn-del" onclick="triggerAds(); deleteOne(${i})"><i class="fa-solid fa-trash"></i></button>
+                        <div><b>[${item.device}] Cookie #${globalIdx+1}</b> <span>${preview.replace(/\n/g, ' ')}</span></div>
+                        <button class="btn-del" onclick="triggerAds(); deleteOne('${item.device}', ${item.index})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
             });
         }
 
-        function deleteOne(i) {
+        function deleteOne(dev, idx) {
             triggerAds();
-            stockCookies.splice(i, 1);
-            localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
+            deviceStocks[dev].splice(idx, 1);
+            localStorage.setItem('netflix_device_stocks', JSON.stringify(deviceStocks));
             renderAdminList();
+            updateCounts();
         }
 
         function clearAll() {
             triggerAds();
-            if(confirm("Are you sure you want to delete ALL stock cookies?")) {
-                stockCookies = [];
-                localStorage.removeItem('netflix_raw_cookies');
+            if(confirm("Are you sure you want to delete ALL device stocks?")) {
+                deviceStocks = { PC: [], Mobile: [], TV: [] };
+                localStorage.removeItem('netflix_device_stocks');
                 renderAdminList();
+                updateCounts();
                 alert("All stock cleared successfully!");
             }
         }
@@ -353,6 +389,9 @@ Check by: @Netflixgivewayonly1`;
             navigator.clipboard.writeText(box.value);
             alert("Cookie successfully copied!");
         }
+
+        // Initialize counts on load
+        updateCounts();
     </script>
 </body>
 </html>
