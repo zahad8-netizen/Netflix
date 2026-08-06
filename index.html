@@ -69,7 +69,7 @@
         .details-row span:last-child { font-weight: 600; color: #46d369; }
         
         .result-box textarea {
-            width: 100%; height: 70px; margin: 10px 0; padding: 10px;
+            width: 100%; height: 80px; margin: 10px 0; padding: 10px;
             border: 1px solid #444; border-radius: 6px; font-family: monospace; font-size: 11px; background: #000; color: #00ffcc;
         }
         
@@ -92,6 +92,7 @@
         .flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .hidden { display: none !important; }
         .loader { text-align: center; color: var(--primary); font-size: 14px; margin: 15px 0; }
+        .footer-channel { margin-top: 15px; font-size: 12px; color: var(--gray); text-align: center; }
     </style>
 </head>
 <body>
@@ -99,7 +100,7 @@
     <header>
         <h1 onclick="triggerAds(); showStep('step1')"><i class="fa-solid fa-play"></i> NetflixHub</h1>
         <div>
-            <a href="https://t.me/jkflixmoviewatch" target="_blank" class="tg-btn" onclick="triggerAds()"><i class="fa-brands fa-telegram"></i> Telegram</a>
+            <a href="https://t.me/Netflixgivewayonly1" target="_blank" class="tg-btn" onclick="triggerAds()"><i class="fa-brands fa-telegram"></i> Telegram</a>
             <button onclick="triggerAds(); toggleAdmin()" id="adminToggleBtn" class="tg-btn" style="background:#222; border:1px solid #444; cursor:pointer; margin-left:5px;"><i class="fa-solid fa-lock"></i> Admin</button>
         </div>
     </header>
@@ -160,6 +161,10 @@
                         <button class="btn-copy" onclick="triggerAds(); copyResult()"><i class="fa-solid fa-copy"></i> Copy Link</button>
                         <a id="directOpenBtn" href="#" target="_blank" class="btn-open" onclick="triggerAds()"><i class="fa-solid fa-external-link-alt"></i> Open Direct</a>
                     </div>
+                    
+                    <div class="footer-channel">
+                        Check by: <b>@Netflixgivewayonly1</b>
+                    </div>
                 </div>
             </div>
         </div>
@@ -180,7 +185,7 @@
                 <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-file-arrow-up"></i> Bulk Upload (.TXT File):</b>
                 <label class="file-upload-box" style="display: block; margin-top: 8px;">
                     <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: var(--primary);"></i>
-                    <p style="font-size: 11px; color: var(--gray); margin-top: 5px;">Click to select .txt file containing cookies</p>
+                    <p style="font-size: 11px; color: var(--gray); margin-top: 5px;">Click to select .txt file containing cookies (Multi-cookies supported)</p>
                     <input type="file" id="bulkFile" accept=".txt" onchange="handleBulkUpload(event)">
                 </label>
             </div>
@@ -258,7 +263,7 @@
                 });
                 let resData = await response.json();
 
-                // Remove cookie from stock once tested to avoid repeating invalid ones
+                // Remove tested cookie from stock
                 stockCookies.splice(randomIndex, 1);
                 localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
 
@@ -286,14 +291,23 @@
         }
 
         function getDeviceLink(type) {
-            triggerAds(); // Ensures ads trigger properly when PC, Mobile, or TV are clicked
+            triggerAds(); 
             if(!activeAccountData) return;
             let link = "";
             if(type === 'PC') link = activeAccountData.pc;
             else if(type === 'Mobile') link = activeAccountData.mobile;
             else if(type === 'TV') link = activeAccountData.tv;
 
-            document.getElementById('outputLink').value = link;
+            let formattedOutput = 
+`Email: ${activeAccountData.email}
+Country: ${activeAccountData.country_code}
+Plan: ${activeAccountData.plan}
+Price: ${activeAccountData.price}
+Next Billing: ${activeAccountData.next_billing}
+Login Link (${type}): ${link}
+Check by: @Netflixgivewayonly1`;
+
+            document.getElementById('outputLink').value = formattedOutput;
             document.getElementById('directOpenBtn').setAttribute('href', link);
             showStep('step3');
         }
@@ -310,6 +324,7 @@
             alert("Cookie successfully added!");
         }
 
+        // Smart Bulk Parser: Separates multiple cookies from text file
         function handleBulkUpload(event) {
             triggerAds();
             let file = event.target.files[0];
@@ -318,11 +333,38 @@
             let reader = new FileReader();
             reader.onload = function(e) {
                 let text = e.target.result;
-                stockCookies.push(text);
                 
+                // Split file content by lines or blocks to detect individual cookies
+                let lines = text.split(/\r?\n/);
+                let currentCookieBlock = "";
+                let countAdded = 0;
+
+                lines.forEach(line => {
+                    if (line.includes("NetflixId") || line.includes(".netflix.com")) {
+                        if (currentCookieBlock.trim().length > 20) {
+                            stockCookies.push(currentCookieBlock.trim());
+                            countAdded++;
+                        }
+                        currentCookieBlock = line + "\n";
+                    } else {
+                        currentCookieBlock += line + "\n";
+                    }
+                });
+
+                if (currentCookieBlock.trim().length > 20) {
+                    stockCookies.push(currentCookieBlock.trim());
+                    countAdded++;
+                }
+
+                // Fallback if no specific format split was triggered but file has data
+                if (countAdded === 0 && text.trim().length > 10) {
+                    stockCookies.push(text.trim());
+                    countAdded = 1;
+                }
+
                 localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
                 renderAdminList();
-                alert("Cookies file successfully imported!");
+                alert(countAdded + " cookies successfully imported and separated into stock!");
             };
             reader.readAsText(file);
         }
@@ -338,39 +380,4 @@
             }
 
             stockCookies.forEach((c, i) => {
-                let preview = c.length > 35 ? c.substring(0, 35) + "..." : c;
-                list.innerHTML += `
-                    <div class="token-item">
-                        <div><b>Cookie #${i+1}</b> <span>${preview.replace(/\n/g, ' ')}</span></div>
-                        <button class="btn-del" onclick="triggerAds(); deleteOne(${i})"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
-            });
-        }
-
-        function deleteOne(i) {
-            triggerAds();
-            stockCookies.splice(i, 1);
-            localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
-            renderAdminList();
-        }
-
-        function clearAll() {
-            triggerAds();
-            if(confirm("Are you sure you want to delete ALL stock cookies?")) {
-                stockCookies = [];
-                localStorage.removeItem('netflix_raw_cookies');
-                renderAdminList();
-                alert("All stock cleared successfully!");
-            }
-        }
-
-        function copyResult() {
-            let box = document.getElementById('outputLink');
-            box.select();
-            navigator.clipboard.writeText(box.value);
-            alert("Link successfully copied!");
-        }
-    </script>
-</body>
-</html>
+                let preview = c.length > 
