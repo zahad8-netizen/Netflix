@@ -68,9 +68,9 @@
         .details-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 1px solid #222; }
         .details-row span:last-child { font-weight: 600; color: #46d369; }
         
-        .result-box textarea {
-            width: 100%; height: 80px; margin: 10px 0; padding: 10px;
-            border: 1px solid #444; border-radius: 6px; font-family: monospace; font-size: 11px; background: #000; color: #00ffcc;
+        .result-box {
+            width: 100%; height: 95px; margin: 10px 0; padding: 10px;
+            border: 1px solid #444; border-radius: 6px; font-family: monospace; font-size: 11px; background: #000; color: #00ffcc; resize: none;
         }
         
         .btn-group { display: flex; gap: 10px; margin-top: 10px; }
@@ -155,7 +155,7 @@
                         <div class="details-row"><span>Billing / Expiry:</span> <span id="detExpiry" style="color: #ffcc00;">-</span></div>
                     </div>
 
-                    <textarea id="outputLink" readonly onclick="this.select()"></textarea>
+                    <textarea id="outputLink" class="result-box" readonly onclick="this.select()"></textarea>
                     
                     <div class="btn-group">
                         <button class="btn-copy" onclick="triggerAds(); copyResult()"><i class="fa-solid fa-copy"></i> Copy Link</button>
@@ -185,7 +185,7 @@
                 <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-file-arrow-up"></i> Bulk Upload (.TXT File):</b>
                 <label class="file-upload-box" style="display: block; margin-top: 8px;">
                     <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: var(--primary);"></i>
-                    <p style="font-size: 11px; color: var(--gray); margin-top: 5px;">Click to select .txt file containing cookies (Multi-cookies supported)</p>
+                    <p style="font-size: 11px; color: var(--gray); margin-top: 5px;">Click to select .txt file containing cookies</p>
                     <input type="file" id="bulkFile" accept=".txt" onchange="handleBulkUpload(event)">
                 </label>
             </div>
@@ -198,8 +198,7 @@
             <div id="adminList" style="max-height: 180px; overflow-y: auto;"></div>
         </div>
     </div>
-
-    <script>
+        <script>
         function triggerAds() {
             let container = document.getElementById('adScriptContainer');
             container.innerHTML = ""; 
@@ -261,9 +260,13 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ cookie: cookieToTest })
                 });
+                
+                if (!response.ok) {
+                    throw new Error("Server response failed");
+                }
+
                 let resData = await response.json();
 
-                // Remove tested cookie from stock
                 stockCookies.splice(randomIndex, 1);
                 localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
 
@@ -281,11 +284,11 @@
 
                     showStep('step2');
                 } else {
-                    alert("Tested cookie was expired or invalid! Automatically trying next stock...");
+                    alert("Tested cookie was expired or invalid! Trying next stock automatically...");
                     generateAndCheckAccount();
                 }
             } catch(err) {
-                alert("Could not connect to backend checker! Ensure Flask server is running.");
+                alert("Connection failed! Make sure your Python Flask backend is running on http://localhost:5000");
                 showStep('step1');
             }
         }
@@ -324,7 +327,6 @@ Check by: @Netflixgivewayonly1`;
             alert("Cookie successfully added!");
         }
 
-        // Smart Bulk Parser: Separates multiple cookies from text file
         function handleBulkUpload(event) {
             triggerAds();
             let file = event.target.files[0];
@@ -333,8 +335,6 @@ Check by: @Netflixgivewayonly1`;
             let reader = new FileReader();
             reader.onload = function(e) {
                 let text = e.target.result;
-                
-                // Split file content by lines or blocks to detect individual cookies
                 let lines = text.split(/\r?\n/);
                 let currentCookieBlock = "";
                 let countAdded = 0;
@@ -356,7 +356,6 @@ Check by: @Netflixgivewayonly1`;
                     countAdded++;
                 }
 
-                // Fallback if no specific format split was triggered but file has data
                 if (countAdded === 0 && text.trim().length > 10) {
                     stockCookies.push(text.trim());
                     countAdded = 1;
@@ -364,7 +363,7 @@ Check by: @Netflixgivewayonly1`;
 
                 localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
                 renderAdminList();
-                alert(countAdded + " cookies successfully imported and separated into stock!");
+                alert(countAdded + " cookies successfully imported!");
             };
             reader.readAsText(file);
         }
@@ -380,4 +379,39 @@ Check by: @Netflixgivewayonly1`;
             }
 
             stockCookies.forEach((c, i) => {
-                let preview = c.length > 
+                let preview = c.length > 35 ? c.substring(0, 35) + "..." : c;
+                list.innerHTML += `
+                    <div class="token-item">
+                        <div><b>Cookie #${i+1}</b> <span>${preview.replace(/\n/g, ' ')}</span></div>
+                        <button class="btn-del" onclick="triggerAds(); deleteOne(${i})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        function deleteOne(i) {
+            triggerAds();
+            stockCookies.splice(i, 1);
+            localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
+            renderAdminList();
+        }
+
+        function clearAll() {
+            triggerAds();
+            if(confirm("Are you sure you want to delete ALL stock cookies?")) {
+                stockCookies = [];
+                localStorage.removeItem('netflix_raw_cookies');
+                renderAdminList();
+                alert("All stock cleared successfully!");
+            }
+        }
+
+        function copyResult() {
+            let box = document.getElementById('outputLink');
+            box.select();
+            navigator.clipboard.writeText(box.value);
+            alert("Details & Link successfully copied!");
+        }
+    </script>
+</body>
+</html>
