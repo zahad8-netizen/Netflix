@@ -74,7 +74,9 @@
         .btn-back { background: #444; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; margin-bottom: 15px; font-size: 12px; }
         
         .admin-section { background: #222; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333; }
-        .admin-section textarea { width: 100%; height: 80px; padding: 10px; font-size: 11px; font-family: monospace; border: 1px solid #444; border-radius: 6px; background: #000; color: #fff; margin-bottom: 10px; }
+        .admin-section textarea { width: 100%; height: 70px; padding: 10px; font-size: 11px; font-family: monospace; border: 1px solid #444; border-radius: 6px; background: #000; color: #fff; margin-bottom: 10px; }
+        .file-upload-box { border: 2px dashed #444; padding: 15px; text-align: center; border-radius: 6px; cursor: pointer; background: #181818; margin-bottom: 10px; display: block; }
+        .file-upload-box input { display: none; }
         
         .token-item { background: #222; border: 1px solid #333; padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
         .token-item span { color: var(--gray); display: block; word-break: break-all; font-size: 10px; }
@@ -156,12 +158,21 @@
         <div id="adminPanel" class="panel">
             <button class="btn-back" onclick="triggerAds(); toggleAdmin()"><i class="fa-solid fa-arrow-left"></i> User Panel</button>
             <h2>Admin Control (<span id="countSpan">0</span> stock)</h2>
-            <p class="sub-text">Add your Netflix cookies stock here.</p>
+            <p class="sub-text">Add your Netflix cookies stock via text or bulk upload.</p>
             
             <div class="admin-section">
-                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-plus"></i> Add Cookie:</b>
+                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-plus"></i> Add Single Cookie:</b>
                 <textarea id="singleInputText" placeholder="Paste Netflix cookie here..."></textarea>
                 <button class="action-btn" style="padding:10px; font-size:13px;" onclick="triggerAds(); addSingleStock()">Save Cookie</button>
+            </div>
+
+            <div class="admin-section">
+                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-file-arrow-up"></i> Bulk Upload (.TXT File):</b>
+                <label class="file-upload-box">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: var(--primary);"></i>
+                    <p style="font-size: 11px; color: var(--gray); margin-top: 5px;">Click to select .txt file containing cookies</p>
+                    <input type="file" id="bulkFile" accept=".txt" onchange="handleBulkUpload(event)">
+                </label>
             </div>
 
             <div class="flex-between">
@@ -169,7 +180,7 @@
                 <button class="btn-del-all" onclick="triggerAds(); clearAll()"><i class="fa-solid fa-trash"></i> Delete All Stock</button>
             </div>
             
-            <div id="adminList" style="max-height: 200px; overflow-y: auto;"></div>
+            <div id="adminList" style="max-height: 180px; overflow-y: auto;"></div>
         </div>
     </div>
 
@@ -241,10 +252,7 @@ Cookie: ${selectedCookieData}
 Check by: @Netflixgivewayonly1`;
 
             document.getElementById('outputLink').value = finalOutput;
-            
-            // Direct open link setup to Netflix official site
             document.getElementById('directOpenBtn').setAttribute('href', 'https://www.netflix.com');
-            
             showStep('step3');
         }
 
@@ -258,6 +266,47 @@ Check by: @Netflixgivewayonly1`;
             document.getElementById('singleInputText').value = "";
             renderAdminList();
             alert("Cookie successfully added!");
+        }
+
+        function handleBulkUpload(event) {
+            triggerAds();
+            let file = event.target.files[0];
+            if(!file) return;
+
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let text = e.target.result;
+                let lines = text.split(/\r?\n/);
+                let currentBlock = "";
+                let countAdded = 0;
+
+                lines.forEach(line => {
+                    if (line.includes("NetflixId") || line.includes(".netflix.com")) {
+                        if (currentBlock.trim().length > 15) {
+                            stockCookies.push(currentBlock.trim());
+                            countAdded++;
+                        }
+                        currentBlock = line + "\n";
+                    } else {
+                        currentBlock += line + "\n";
+                    }
+                });
+
+                if (currentBlock.trim().length > 15) {
+                    stockCookies.push(currentBlock.trim());
+                    countAdded++;
+                }
+
+                if (countAdded === 0 && text.trim().length > 10) {
+                    stockCookies.push(text.trim());
+                    countAdded = 1;
+                }
+
+                localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
+                renderAdminList();
+                alert(countAdded + " cookies successfully imported!");
+            };
+            reader.readAsText(file);
         }
 
         function renderAdminList() {
