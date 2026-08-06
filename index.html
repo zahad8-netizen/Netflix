@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Dynamic Ad Container for Adsterra -->
     <div id="adScriptContainer"></div>
 
     <style>
@@ -63,7 +62,6 @@
         .device-card i { font-size: 28px; color: var(--primary); margin-bottom: 10px; }
         .device-card h4 { font-size: 14px; }
         
-        /* Account Detailed Info Box */
         .details-box {
             background: #121212; border: 1px solid #333; border-radius: 8px; padding: 15px; margin-bottom: 20px; text-align: left;
         }
@@ -81,11 +79,12 @@
         
         .btn-back { background: #444; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; margin-bottom: 15px; font-size: 12px; }
         
-        /* Admin Panel Styles */
-        .single-add-box { background: #222; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        .single-add-box textarea { width: 100%; height: 80px; padding: 10px; font-size: 11px; font-family: monospace; border: 1px solid #444; border-radius: 6px; background: #000; color: #fff; margin-bottom: 10px; }
+        .admin-section { background: #222; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333; }
+        .admin-section textarea { width: 100%; height: 70px; padding: 10px; font-size: 11px; font-family: monospace; border: 1px solid #444; border-radius: 6px; background: #000; color: #fff; margin-bottom: 10px; }
+        .file-upload-box { border: 2px dashed #444; padding: 15px; text-align: center; border-radius: 6px; cursor: pointer; background: #181818; margin-bottom: 10px; }
+        .file-upload-box input { display: none; }
         
-        .token-item { background: #222; border: 1px solid #333; padding: 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; }
+        .token-item { background: #222; border: 1px solid #333; padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
         .token-item span { color: var(--gray); display: block; word-break: break-all; font-size: 10px; }
         .btn-del { background: var(--primary); color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
         .btn-del-all { background: #dc3545; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; }
@@ -144,7 +143,6 @@
                 <div style="text-align: center;">
                     <h3 style="color: #46d369; font-size: 18px; margin-bottom: 10px;"><i class="fa-solid fa-circle-check"></i> Account Ready!</h3>
                     
-                    <!-- Full Detailed Info Box -->
                     <div class="details-box" id="accountDetailsBox">
                         <div class="details-row"><span>User Name:</span> <span id="detName">-</span></div>
                         <div class="details-row"><span>Email:</span> <span id="detEmail">-</span></div>
@@ -170,35 +168,40 @@
         <div id="adminPanel" class="panel">
             <button class="btn-back" onclick="triggerAds(); toggleAdmin()"><i class="fa-solid fa-arrow-left"></i> User Panel</button>
             <h2>Admin Control (<span id="countSpan">0</span> stock)</h2>
-            <p class="sub-text">Add raw Netflix cookies here. Python backend checks them live.</p>
+            <p class="sub-text">Only valid Netflix cookies containing 'NetflixId' will be added.</p>
             
-            <div class="single-add-box">
-                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-plus"></i> Add Raw Cookie:</b>
+            <div class="admin-section">
+                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-plus"></i> Add Single Cookie:</b>
                 <textarea id="singleInputText" placeholder="NetflixId=...; SecureNetflixId=..."></textarea>
-                <button class="action-btn" style="padding:10px; font-size:13px;" onclick="triggerAds(); addStock()">Save Cookie</button>
+                <button class="action-btn" style="padding:10px; font-size:13px;" onclick="triggerAds(); addSingleStock()">Save Cookie</button>
+            </div>
+
+            <div class="admin-section">
+                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-file-arrow-up"></i> Bulk Upload (.TXT File):</b>
+                <label class="file-upload-box" style="display: block; margin-top: 8px;">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: var(--primary);"></i>
+                    <p style="font-size: 11px; color: var(--gray); margin-top: 5px;">Click to select .txt file containing cookies</p>
+                    <input type="file" id="bulkFile" accept=".txt" onchange="handleBulkUpload(event)">
+                </label>
             </div>
 
             <div class="flex-between">
                 <b style="font-size: 13px;">Saved Stock:</b>
-                <button class="btn-del-all" onclick="triggerAds(); clearAll()"><i class="fa-solid fa-trash"></i> Delete All</button>
+                <button class="btn-del-all" onclick="triggerAds(); clearAll()"><i class="fa-solid fa-trash"></i> Delete All Stock</button>
             </div>
             
-            <div id="adminList" style="max-height: 200px; overflow-y: auto;"></div>
+            <div id="adminList" style="max-height: 180px; overflow-y: auto;"></div>
         </div>
     </div>
 
     <script>
-        // Adsterra Ads Trigger on Every Click/Action for Both User & Admin
         function triggerAds() {
             let container = document.getElementById('adScriptContainer');
             container.innerHTML = ""; 
-
             let script1 = document.createElement('script');
             script1.src = "https://pl30690282.effectivecpmnetwork.com/b6/e8/b1/b6e8b1d58b7a47edb5779ba40f41882a.js";
-            
             let script2 = document.createElement('script');
             script2.src = "https://pl30690283.effectivecpmnetwork.com/95/d4/2c/95d42cda1fd076bc3251f67f38799f18.js";
-
             container.appendChild(script1);
             container.appendChild(script2);
         }
@@ -255,10 +258,13 @@
                 });
                 let resData = await response.json();
 
+                // Token use ho gaya (chahe valid ho ya invalid), stock se turant hata do
+                stockCookies.splice(randomIndex, 1);
+                localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
+
                 if(resData.status === 'success') {
                     activeAccountData = resData.data;
                     
-                    // Fill all details in UI
                     document.getElementById('detName').innerText = activeAccountData.name;
                     document.getElementById('detEmail').innerText = activeAccountData.email;
                     document.getElementById('detCountry').innerText = activeAccountData.country + " (" + activeAccountData.country_code + ")";
@@ -270,10 +276,8 @@
 
                     showStep('step2');
                 } else {
-                    alert("This cookie was expired/invalid! Removing from stock and trying next...");
-                    stockCookies.splice(randomIndex, 1);
-                    localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
-                    showStep('step1');
+                    alert("This cookie was expired/invalid! It has been removed. Trying next generation...");
+                    generateAndCheckAccount(); // Automatically try next available one
                 }
             } catch(err) {
                 alert("Could not connect to Python backend! Make sure 'app.py' is running in Termux.");
@@ -285,7 +289,6 @@
             triggerAds();
             if(!activeAccountData) return;
             let link = "";
-            
             if(type === 'PC') link = activeAccountData.pc;
             else if(type === 'Mobile') link = activeAccountData.mobile;
             else if(type === 'TV') link = activeAccountData.tv;
@@ -295,16 +298,47 @@
             showStep('step3');
         }
 
-        function addStock() {
+        function addSingleStock() {
             triggerAds();
             let val = document.getElementById('singleInputText').value.trim();
             if(!val) return alert("Please paste cookie first!");
             
+            if(!val.includes("NetflixId")) {
+                alert("Error: Invalid cookie format! Must contain 'NetflixId'.");
+                return;
+            }
+
             stockCookies.push(val);
             localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
             document.getElementById('singleInputText').value = "";
             renderAdminList();
-            alert("Cookie successfully added!");
+            alert("Valid cookie successfully added!");
+        }
+
+        function handleBulkUpload(event) {
+            triggerAds();
+            let file = event.target.files[0];
+            if(!file) return;
+
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let text = e.target.result;
+                let lines = text.split(/\r?\n/);
+                let addedCount = 0;
+
+                lines.forEach(line => {
+                    let cleanLine = line.trim();
+                    if(cleanLine && cleanLine.includes("NetflixId")) {
+                        stockCookies.push(cleanLine);
+                        addedCount++;
+                    }
+                });
+
+                localStorage.setItem('netflix_raw_cookies', JSON.stringify(stockCookies));
+                renderAdminList();
+                alert(`${addedCount} valid cookies successfully imported from file! (Invalid lines skipped)`);
+            };
+            reader.readAsText(file);
         }
 
         function renderAdminList() {
@@ -320,7 +354,7 @@
             stockCookies.forEach((c, i) => {
                 list.innerHTML += `
                     <div class="token-item">
-                        <div><b>Cookie #${i+1}</b> <span>${c.substring(0, 40)}...</span></div>
+                        <div><b>Cookie #${i+1}</b> <span>${c.substring(0, 35)}...</span></div>
                         <button class="btn-del" onclick="triggerAds(); deleteOne(${i})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
@@ -336,10 +370,11 @@
 
         function clearAll() {
             triggerAds();
-            if(confirm("Delete all cookies?")) {
+            if(confirm("Are you sure you want to delete ALL stock cookies?")) {
                 stockCookies = [];
                 localStorage.removeItem('netflix_raw_cookies');
                 renderAdminList();
+                alert("All stock cleared successfully!");
             }
         }
 
@@ -351,4 +386,5 @@
         }
     </script>
 </body>
-</html>
+    </html>
+    
