@@ -61,7 +61,7 @@
         .device-card h4 { font-size: 14px; }
         
         .result-box {
-            width: 100%; height: 110px; margin: 10px 0; padding: 10px;
+            width: 100%; height: 130px; margin: 10px 0; padding: 10px;
             border: 1px solid #444; border-radius: 6px; font-family: monospace; font-size: 11px; background: #000; color: #00ffcc; resize: none;
         }
         
@@ -72,7 +72,7 @@
         .btn-back { background: #444; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; margin-bottom: 15px; font-size: 12px; }
         
         .admin-section { background: #222; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333; }
-        .admin-section textarea { width: 100%; height: 70px; padding: 10px; font-size: 11px; font-family: monospace; border: 1px solid #444; border-radius: 6px; background: #000; color: #fff; margin-bottom: 10px; }
+        .admin-section textarea { width: 100%; height: 80px; padding: 10px; font-size: 11px; font-family: monospace; border: 1px solid #444; border-radius: 6px; background: #000; color: #fff; margin-bottom: 10px; }
         .file-upload-box { border: 2px dashed #444; padding: 15px; text-align: center; border-radius: 6px; cursor: pointer; background: #181818; margin-bottom: 10px; display: block; }
         .file-upload-box input { display: none; }
         
@@ -104,18 +104,16 @@
 
         <!-- USER PANEL -->
         <div id="userPanel" class="panel active">
-            <!-- Step 0: Main Home with Generate Button -->
             <div id="mainHome" style="text-align: center; padding: 20px 0;">
-                <h2>Get Verified Netflix Cookie</h2>
-                <p class="sub-text">Click below to generate device cookies instantly.</p>
+                <h2>Get Verified Netflix Token</h2>
+                <p class="sub-text">Click below to generate clean device credentials instantly.</p>
                 <button class="action-btn" onclick="startGeneration()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Cookie</button>
             </div>
 
-            <!-- Step 1: Device Selection -->
             <div id="deviceSelectionStep" class="hidden">
                 <button class="btn-back" onclick="triggerAds(); showMainStep('mainHome');"><i class="fa-solid fa-arrow-left"></i> Back</button>
                 <h2>Select Your Device</h2>
-                <p class="sub-text">Choose your device type to get stock cookie token:</p>
+                <p class="sub-text">Choose your device type to get clean token stock:</p>
                 <div class="device-grid">
                     <div class="device-card" onclick="selectDevice('PC')">
                         <i class="fa-solid fa-desktop"></i>
@@ -132,23 +130,21 @@
                 </div>
             </div>
 
-            <!-- Loader -->
             <div id="loaderStep" class="hidden loader">
                 <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
                 <p style="margin-top: 10px;">Fetching unique token for your device...</p>
             </div>
 
-            <!-- Step 2: Final Output Token -->
             <div id="outputStep" class="hidden">
                 <button class="btn-back" onclick="triggerAds(); backToDeviceSelection();"><i class="fa-solid fa-arrow-left"></i> Back</button>
                 <div style="text-align: center;">
-                    <h3 style="color: #46d369; font-size: 18px; margin-bottom: 10px;"><i class="fa-solid fa-circle-check"></i> <span id="deviceTitleLabel"></span> Cookie Ready!</h3>
+                    <h3 style="color: #46d369; font-size: 18px; margin-bottom: 10px;"><i class="fa-solid fa-circle-check"></i> <span id="deviceTitleLabel"></span> Credential Ready!</h3>
                     
                     <textarea id="outputLink" class="result-box" readonly onclick="this.select()"></textarea>
                     
                     <div class="btn-group">
-                        <button class="btn-copy" onclick="copyResult()"><i class="fa-solid fa-copy"></i> Copy Cookie</button>
-                        <a id="directOpenBtn" href="https://www.netflix.com" target="_blank" class="btn-open" onclick="triggerAds()"><i class="fa-solid fa-external-link-alt"></i> Open Direct</a>
+                        <button class="btn-copy" onclick="copyResult()"><i class="fa-solid fa-copy"></i> Copy Token</button>
+                        <a id="directOpenBtn" href="#" target="_blank" class="btn-open" onclick="triggerAds()"><i class="fa-solid fa-external-link-alt"></i> Open Netflix</a>
                     </div>
                     
                     <div class="footer-channel">
@@ -162,25 +158,20 @@
         <div id="adminPanel" class="panel">
             <button class="btn-back" onclick="triggerAds(); toggleAdmin()"><i class="fa-solid fa-arrow-left"></i> User Panel</button>
             <h2>Admin Control (Total Stock: <span id="countSpan">0</span>)</h2>
-            <p class="sub-text">Add manual cookie or upload single text file containing all device data.</p>
+            <p class="sub-text">Add raw account text format or bulk upload .txt file containing multiple accounts.</p>
             
             <div class="admin-section">
-                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-plus"></i> Manual Add (Select Target Device):</b>
-                <select id="adminDeviceSelect" style="width:100%; padding:8px; background:#000; color:#fff; border:1px solid #444; border-radius:6px; margin-bottom:8px; font-size:12px;">
-                    <option value="PC">PC / Laptop</option>
-                    <option value="Mobile">Mobile</option>
-                    <option value="TV">Smart TV</option>
-                </select>
-                <textarea id="singleInputText" placeholder="Paste Netflix cookie here..."></textarea>
-                <button class="action-btn" style="padding:10px; font-size:13px;" onclick="triggerAds(); addSingleStock()">Save to Device Stock</button>
+                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-plus"></i> Add Single Account Format:</b>
+                <textarea id="singleInputText" placeholder="Paste full block (PC, Mobile, TV & Cookie format)..."></textarea>
+                <button class="action-btn" style="padding:10px; font-size:13px;" onclick="triggerAds(); addSingleStock()">Process & Save to Stock</button>
             </div>
 
             <div class="admin-section">
-                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-file-arrow-up"></i> Universal File Upload (.TXT):</b>
-                <p style="font-size: 10px; color: var(--gray); margin-bottom: 6px;">Upload a file containing PC, Mobile, or TV tags and it will sort automatically.</p>
+                <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-file-arrow-up"></i> Bulk Accounts File Upload (.TXT):</b>
+                <p style="font-size: 10px; color: var(--gray); margin-bottom: 6px;">Upload text file with multiple accounts. System will automatically split PC, Mobile, and TV.</p>
                 <label class="file-upload-box">
                     <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: var(--primary);"></i>
-                    <p style="font-size: 11px; color: var(--gray); margin-top: 5px;">Click to select universal .txt file</p>
+                    <p style="font-size: 11px; color: var(--gray); margin-top: 5px;">Click to select accounts .txt file</p>
                     <input type="file" id="bulkFile" accept=".txt" onchange="handleUniversalFileUpload(event)">
                 </label>
             </div>
@@ -197,7 +188,7 @@
     </div>
 
     <div id="adScriptContainer" style="display:none;"></div>
-        <script>
+            <script>
         function triggerAds() {
             window.open("https://www.effectivecpmnetwork.com/fxpc63ck5?key=8eec6d18a20b2154ac2070daa2dc23e7", "_blank");
 
@@ -289,10 +280,38 @@
             showMainStep('deviceSelectionStep');
         }
 
+        // Extracts specific device link and appends Netscape cookie cleanly without account title/names
+        function parseAndStoreAccountBlock(blockText) {
+            let pcMatch = blockText.match(/(💻\s*PC Login:\s*https?:\/\/[^\s]+)/i);
+            let mobMatch = blockText.match(/(📱\s*Mobile Login:\s*https?:\/\/[^\s]+)/i);
+            let tvMatch = blockText.match(/(📺\s*TV Login:\s*https?:\/\/[^\s]+)/i);
+            let cookieMatch = blockText.match(/(Cookie:\s*[^\n]+)/i);
+
+            let baseCookie = cookieMatch ? cookieMatch[1] : "";
+
+            let addedCount = 0;
+            if (pcMatch) {
+                let itemContent = pcMatch[1] + (baseCookie ? "\n\n" + baseCookie : "");
+                deviceStocks.PC.push(itemContent);
+                addedCount++;
+            }
+            if (mobMatch) {
+                let itemContent = mobMatch[1] + (baseCookie ? "\n\n" + baseCookie : "");
+                deviceStocks.Mobile.push(itemContent);
+                addedCount++;
+            }
+            if (tvMatch) {
+                let itemContent = tvMatch[1] + (baseCookie ? "\n\n" + baseCookie : "");
+                deviceStocks.TV.push(itemContent);
+                addedCount++;
+            }
+            return addedCount;
+        }
+
         function selectDevice(deviceType) {
             triggerAds();
             if(deviceStocks[deviceType].length === 0) {
-                alert(deviceType + " stock is empty! Please add cookies for " + deviceType + " first.");
+                alert(deviceType + " stock is empty! Please add accounts in admin panel first.");
                 return;
             }
 
@@ -300,14 +319,18 @@
 
             setTimeout(() => {
                 let randomIndex = Math.floor(Math.random() * deviceStocks[deviceType].length);
-                let selectedCookieData = deviceStocks[deviceType].splice(randomIndex, 1)[0];
+                let selectedData = deviceStocks[deviceType].splice(randomIndex, 1)[0];
                 
                 localStorage.setItem('netflix_device_stocks', JSON.stringify(deviceStocks));
                 updateCounts();
 
+                // Extract direct URL for "Open Netflix" button
+                let urlMatch = selectedData.match(/https?:\/\/[^\s]+/);
+                let directUrl = urlMatch ? urlMatch[0] : "https://www.netflix.com";
+
                 document.getElementById('deviceTitleLabel').innerText = deviceType;
-                document.getElementById('outputLink').value = selectedCookieData;
-                document.getElementById('directOpenBtn').setAttribute('href', 'https://www.netflix.com');
+                document.getElementById('outputLink').value = selectedData;
+                document.getElementById('directOpenBtn').setAttribute('href', directUrl);
                 
                 document.getElementById('loaderStep').classList.add('hidden');
                 document.getElementById('outputStep').classList.remove('hidden');
@@ -316,19 +339,23 @@
 
         function addSingleStock() {
             triggerAds();
-            let targetDevice = document.getElementById('adminDeviceSelect').value;
             let val = document.getElementById('singleInputText').value.trim();
-            if(!val) return alert("Please paste cookie first!");
+            if(!val) return alert("Please paste account text block first!");
             
-            deviceStocks[targetDevice].push(val);
+            let count = parseAndStoreAccountBlock(val);
+            if(count === 0) {
+                // Fallback if formatting doesn't match standard emojis
+                deviceStocks.PC.push(val);
+                count = 1;
+            }
+
             localStorage.setItem('netflix_device_stocks', JSON.stringify(deviceStocks));
             document.getElementById('singleInputText').value = "";
             renderAdminList();
             updateCounts();
-            alert("Cookie successfully added to " + targetDevice + " stock!");
+            alert("Successfully parsed and saved to device stocks!");
         }
 
-        // Universal file upload that detects PC, Mobile, or TV automatically from text/tags
         function handleUniversalFileUpload(event) {
             triggerAds();
             let file = event.target.files[0];
@@ -337,36 +364,21 @@
             let reader = new FileReader();
             reader.onload = function(e) {
                 let text = e.target.result;
-                let blocks = text.split(/\r?\n\s*\r?\n/); // Split by empty lines or blocks
-                let addedCounts = { PC: 0, Mobile: 0, TV: 0 };
-
-                if(blocks.length <= 1) {
-                    blocks = text.split(/---\n|===/); // Alternate splitting if needed
-                }
+                let blocks = text.split(/PREMIUM ACCOUNT|ACCOUNT #/i);
+                let totalAdded = 0;
 
                 blocks.forEach(block => {
-                    let content = block.trim();
-                    if(content.length > 10) {
-                        let lowerBlock = content.toLowerCase();
-                        if(lowerBlock.includes('tv') || lowerBlock.includes('smarttv') || lowerBlock.includes('smart tv')) {
-                            deviceStocks.TV.push(content);
-                            addedCounts.TV++;
-                        } else if(lowerBlock.includes('mobile') || lowerBlock.includes('android') || lowerBlock.includes('phone')) {
-                            deviceStocks.Mobile.push(content);
-                            addedCounts.Mobile++;
-                        } else {
-                            // Default fallback or PC check
-                            deviceStocks.PC.push(content);
-                            addedCounts.PC++;
-                        }
+                    if(block.trim().length > 20) {
+                        let added = parseAndStoreAccountBlock(block);
+                        totalAdded += added;
                     }
                 });
 
                 localStorage.setItem('netflix_device_stocks', JSON.stringify(deviceStocks));
                 renderAdminList();
                 updateCounts();
-                alert(`Uploaded Successfully!\nPC Added: ${addedCounts.PC}\nMobile Added: ${addedCounts.Mobile}\nTV Added: ${addedCounts.TV}`);
-                event.target.value = ""; // Reset input
+                alert(`File Uploaded & Sorted Successfully!\nTotal Device Options Added: ${totalAdded}\nPC: ${deviceStocks.PC.length}, Mobile: ${deviceStocks.Mobile.length}, TV: ${deviceStocks.TV.length}`);
+                event.target.value = "";
             };
             reader.readAsText(file);
         }
@@ -391,7 +403,7 @@
                 let preview = item.cookie.length > 30 ? item.cookie.substring(0, 30) + "..." : item.cookie;
                 list.innerHTML += `
                     <div class="token-item">
-                        <div><b>[${item.device}] Cookie #${globalIdx+1}</b> <span>${preview.replace(/\n/g, ' ')}</span></div>
+                        <div><b>[${item.device}] Item #${globalIdx+1}</b> <span>${preview.replace(/\n/g, ' ')}</span></div>
                         <button class="btn-del" onclick="triggerAds(); deleteOne('${item.device}', ${item.index})"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
@@ -422,7 +434,7 @@
             let box = document.getElementById('outputLink');
             box.select();
             navigator.clipboard.writeText(box.value);
-            alert("Cookie successfully copied!");
+            alert("Token/Cookie successfully copied!");
         }
 
         updateCounts();
