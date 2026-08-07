@@ -21,19 +21,19 @@
         header {
             width: 100%; background: #141414; padding: 15px 30px;
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid #222;
+            border-bottom: 2px solid #222; position: relative; z-index: 10;
         }
         header h1 { color: var(--primary); font-size: 22px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         
         .tg-btn {
             background: #0088cc; color: white; padding: 8px 15px; border-radius: 6px;
-            text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;
+            text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; position: relative; z-index: 11;
         }
         
         .container {
             width: 100%; max-width: 650px; margin: 30px 15px; background: var(--card-bg);
             padding: 30px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-            border: 1px solid #333;
+            border: 1px solid #333; position: relative; z-index: 10;
         }
         
         .panel { display: none; }
@@ -45,7 +45,7 @@
         .action-btn {
             background: var(--primary); color: white; border: none; padding: 14px 20px;
             font-size: 15px; font-weight: 600; border-radius: 8px; cursor: pointer; width: 100%;
-            transition: 0.3s; box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4); text-align: center; display: block; text-decoration: none;
+            transition: 0.3s; box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4); text-align: center; display: block; text-decoration: none; position: relative; z-index: 11;
         }
         .action-btn:hover { background: #f6121d; }
         
@@ -54,32 +54,32 @@
         
         .device-card {
             background: #222; color: white; padding: 20px 10px; border-radius: 8px;
-            text-align: center; cursor: pointer; border: 1px solid #444; transition: 0.3s;
+            text-align: center; cursor: pointer; border: 1px solid #444; transition: 0.3s; position: relative; z-index: 11;
         }
         .device-card:hover { border-color: var(--primary); transform: translateY(-3px); }
         .device-card i { font-size: 28px; color: var(--primary); margin-bottom: 10px; }
         .device-card h4 { font-size: 14px; }
         
         .result-box {
-            width: 100%; height: 130px; margin: 10px 0; padding: 10px;
-            border: 1px solid #444; border-radius: 6px; font-family: monospace; font-size: 11px; background: #000; color: #00ffcc; resize: none;
+            width: 100%; height: 160px; margin: 10px 0; padding: 10px;
+            border: 1px solid #444; border-radius: 6px; font-family: monospace; font-size: 11px; background: #000; color: #00ffcc; resize: none; text-align: left; position: relative; z-index: 11;
         }
         
         .btn-group { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-copy { background: #28a745; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: 600; flex: 1; }
-        .btn-open { background: #007bff; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; text-align: center; flex: 1; font-size: 13px; line-height: 20px;}
+        .btn-copy { background: #28a745; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: 600; flex: 1; position: relative; z-index: 11; }
+        .btn-open { background: #007bff; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-weight: 600; text-decoration: none; display: inline-block; text-align: center; flex: 1; font-size: 13px; line-height: 20px; position: relative; z-index: 11;}
         
-        .btn-back { background: #444; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; margin-bottom: 15px; font-size: 12px; }
+        .btn-back { background: #444; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; margin-bottom: 15px; font-size: 12px; position: relative; z-index: 11; }
         
         .admin-section { background: #222; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333; }
-        .admin-section textarea { width: 100%; height: 80px; padding: 10px; font-size: 11px; font-family: monospace; border: 1px solid #444; border-radius: 6px; background: #000; color: #fff; margin-bottom: 10px; }
-        .file-upload-box { border: 2px dashed #444; padding: 15px; text-align: center; border-radius: 6px; cursor: pointer; background: #181818; margin-bottom: 10px; display: block; }
+        .admin-section textarea { width: 100%; height: 80px; padding: 10px; font-size: 11px; font-family: monospace; border: 1px solid #444; border-radius: 6px; background: #000; color: #fff; margin-bottom: 10px; position: relative; z-index: 11; }
+        .file-upload-box { border: 2px dashed #444; padding: 15px; text-align: center; border-radius: 6px; cursor: pointer; background: #181818; margin-bottom: 10px; display: block; position: relative; z-index: 11; }
         .file-upload-box input { display: none; }
         
-        .token-item { background: #222; border: 1px solid #333; padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
+        .token-item { background: #222; border: 1px solid #333; padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; position: relative; z-index: 11; }
         .token-item span { color: var(--gray); display: block; word-break: break-all; font-size: 10px; }
-        .btn-del { background: var(--primary); color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
-        .btn-del-all { background: #dc3545; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; }
+        .btn-del { background: var(--primary); color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; position: relative; z-index: 11; }
+        .btn-del-all { background: #dc3545; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; position: relative; z-index: 11; }
         
         .flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .hidden { display: none !important; }
@@ -92,9 +92,9 @@
 <body>
 
     <header>
-        <h1 onclick="triggerAds(); showMainStep('mainHome')"><i class="fa-solid fa-play"></i> NetflixHub</h1>
+        <h1 onclick="triggerAdOnce(); showMainStep('mainHome')"><i class="fa-solid fa-play"></i> NetflixHub</h1>
         <div>
-            <a href="https://t.me/Netflixgivewayonly1" target="_blank" class="tg-btn" onclick="triggerAds()"><i class="fa-brands fa-telegram"></i> Telegram</a>
+            <a href="https://t.me/Netflixgivewayonly1" target="_blank" class="tg-btn" onclick="triggerAdOnce()"><i class="fa-brands fa-telegram"></i> Telegram</a>
             <button onclick="toggleAdmin()" id="adminToggleBtn" class="tg-btn" style="background:#222; border:1px solid #444; cursor:pointer; margin-left:5px;"><i class="fa-solid fa-lock"></i> Admin</button>
         </div>
     </header>
@@ -107,23 +107,23 @@
             <div id="mainHome" style="text-align: center; padding: 20px 0;">
                 <h2>Get Verified Netflix Token</h2>
                 <p class="sub-text">Click below to generate clean device credentials instantly.</p>
-                <button class="action-btn" onclick="startGeneration()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Cookie</button>
+                <button class="action-btn" onclick="triggerAdOnce(); startGeneration()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Cookie</button>
             </div>
 
             <div id="deviceSelectionStep" class="hidden">
-                <button class="btn-back" onclick="triggerAds(); showMainStep('mainHome');"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <button class="btn-back" onclick="triggerAdOnce(); showMainStep('mainHome');"><i class="fa-solid fa-arrow-left"></i> Back</button>
                 <h2>Select Your Device</h2>
                 <p class="sub-text">Choose your device type to get clean token stock:</p>
                 <div class="device-grid">
-                    <div class="device-card" onclick="selectDevice('PC')">
+                    <div class="device-card" onclick="triggerAdOnce(); selectDevice('PC')">
                         <i class="fa-solid fa-desktop"></i>
                         <h4>PC Stock (<span id="pcCount">0</span>)</h4>
                     </div>
-                    <div class="device-card" onclick="selectDevice('Mobile')">
+                    <div class="device-card" onclick="triggerAdOnce(); selectDevice('Mobile')">
                         <i class="fa-solid fa-mobile-screen"></i>
                         <h4>Mobile Stock (<span id="mobileCount">0</span>)</h4>
                     </div>
-                    <div class="device-card" onclick="selectDevice('TV')">
+                    <div class="device-card" onclick="triggerAdOnce(); selectDevice('TV')">
                         <i class="fa-solid fa-tv"></i>
                         <h4>Smart TV Stock (<span id="tvCount">0</span>)</h4>
                     </div>
@@ -136,15 +136,17 @@
             </div>
 
             <div id="outputStep" class="hidden">
-                <button class="btn-back" onclick="triggerAds(); backToDeviceSelection();"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <button class="btn-back" onclick="triggerAdOnce(); backToDeviceSelection();"><i class="fa-solid fa-arrow-left"></i> Back</button>
                 <div style="text-align: center;">
                     <h3 style="color: #46d369; font-size: 18px; margin-bottom: 10px;"><i class="fa-solid fa-circle-check"></i> <span id="deviceTitleLabel"></span> Credential Ready!</h3>
                     
+                    <div id="accountMetaInfo" style="background: #111; padding: 8px; border-radius: 6px; font-size: 11px; margin-bottom: 8px; text-align: left; color: #ffcc00; border: 1px solid #333;"></div>
+
                     <textarea id="outputLink" class="result-box" readonly onclick="this.select()"></textarea>
                     
                     <div class="btn-group">
-                        <button class="btn-copy" onclick="copyResult()"><i class="fa-solid fa-copy"></i> Copy Token</button>
-                        <a id="directOpenBtn" href="#" target="_blank" class="btn-open" onclick="triggerAds()"><i class="fa-solid fa-external-link-alt"></i> Open Netflix</a>
+                        <button class="btn-copy" onclick="triggerAdOnce(); copyResult()"><i class="fa-solid fa-copy"></i> Copy Token</button>
+                        <a id="directOpenBtn" href="#" target="_blank" class="btn-open" onclick="triggerAdOnce()"><i class="fa-solid fa-external-link-alt"></i> Open Netflix</a>
                     </div>
                     
                     <div class="footer-channel">
@@ -156,20 +158,20 @@
 
         <!-- ADMIN PANEL -->
         <div id="adminPanel" class="panel">
-            <button class="btn-back" onclick="triggerAds(); toggleAdmin()"><i class="fa-solid fa-arrow-left"></i> User Panel</button>
+            <button class="btn-back" onclick="triggerAdOnce(); toggleAdmin()"><i class="fa-solid fa-arrow-left"></i> User Panel</button>
             <h2>Admin Control (Total Stock: <span id="countSpan">0</span>)</h2>
             <p class="sub-text">Add raw account text format or bulk upload .txt file containing multiple accounts.</p>
             
             <div class="admin-section">
                 <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-plus"></i> Add Single Account Format:</b>
                 <textarea id="singleInputText" placeholder="Paste full block (PC, Mobile, TV & Cookie format)..."></textarea>
-                <button class="action-btn" style="padding:10px; font-size:13px;" onclick="triggerAds(); addSingleStock()">Process & Save to Stock</button>
+                <button class="action-btn" style="padding:10px; font-size:13px;" onclick="triggerAdOnce(); addSingleStock()">Process & Save to Stock</button>
             </div>
 
             <div class="admin-section">
                 <b style="font-size: 12px; color: #fff;"><i class="fa-solid fa-file-arrow-up"></i> Bulk Accounts File Upload (.TXT):</b>
                 <p style="font-size: 10px; color: var(--gray); margin-bottom: 6px;">Upload text file with multiple accounts. System will automatically split PC, Mobile, and TV.</p>
-                <label class="file-upload-box">
+                <label class="file-upload-box" onclick="triggerAdOnce()">
                     <i class="fa-solid fa-cloud-arrow-up" style="font-size: 24px; color: var(--primary);"></i>
                     <p style="font-size: 11px; color: var(--gray); margin-top: 5px;">Click to select accounts .txt file</p>
                     <input type="file" id="bulkFile" accept=".txt" onchange="handleUniversalFileUpload(event)">
@@ -178,7 +180,7 @@
 
             <div class="flex-between">
                 <b style="font-size: 13px;">Saved Stock List:</b>
-                <button class="btn-del-all" onclick="triggerAds(); clearAll()"><i class="fa-solid fa-trash"></i> Delete All Stock</button>
+                <button class="btn-del-all" onclick="triggerAdOnce(); clearAll()"><i class="fa-solid fa-trash"></i> Delete All Stock</button>
             </div>
             
             <div id="adminList" style="max-height: 180px; overflow-y: auto;"></div>
@@ -188,9 +190,16 @@
     </div>
 
     <div id="adScriptContainer" style="display:none;"></div>
-            <script>
-        function triggerAds() {
-            window.open("https://www.effectivecpmnetwork.com/fxpc63ck5?key=8eec6d18a20b2154ac2070daa2dc23e7", "_blank");
+                                                                                            <script>
+        let lastAdTime = 0;
+        function triggerAdOnce() {
+            let now = Date.now();
+            if (now - lastAdTime < 4000) return;
+            lastAdTime = now;
+
+            try {
+                window.open("https://www.effectivecpmnetwork.com/fxpc63ck5?key=8eec6d18a20b2154ac2070daa2dc23e7", "_blank");
+            } catch(e) {}
 
             let container = document.getElementById('adScriptContainer');
             container.innerHTML = ""; 
@@ -203,7 +212,6 @@
             
             container.appendChild(script1);
             container.appendChild(script2);
-
             loadBannerAds();
         }
 
@@ -239,7 +247,6 @@
         }
 
         function toggleAdmin() {
-            triggerAds();
             let uPanel = document.getElementById('userPanel');
             let aPanel = document.getElementById('adminPanel');
             
@@ -270,7 +277,6 @@
         }
 
         function startGeneration() {
-            triggerAds();
             updateCounts();
             showMainStep('deviceSelectionStep');
         }
@@ -280,36 +286,45 @@
             showMainStep('deviceSelectionStep');
         }
 
-        // Extracts specific device link and appends Netscape cookie cleanly without account title/names
         function parseAndStoreAccountBlock(blockText) {
-            let pcMatch = blockText.match(/(💻\s*PC Login:\s*https?:\/\/[^\s]+)/i);
-            let mobMatch = blockText.match(/(📱\s*Mobile Login:\s*https?:\/\/[^\s]+)/i);
-            let tvMatch = blockText.match(/(📺\s*TV Login:\s*https?:\/\/[^\s]+)/i);
-            let cookieMatch = blockText.match(/(Cookie:\s*[^\n]+)/i);
+            let countryMatch = blockText.match(/Country:\s*([^\n\r]+)/i);
+            let planMatch = blockText.match(/Plan:\s*([^\n\r]+)/i);
+            let profilesMatch = blockText.match(/Profiles\s*\(\d+\):\s*([^\n\r]+)/i);
 
-            let baseCookie = cookieMatch ? cookieMatch[1] : "";
+            let country = countryMatch ? countryMatch[1].trim() : "N/A";
+            let plan = planMatch ? planMatch[1].trim() : "N/A";
+            let profiles = profilesMatch ? profilesMatch[1].trim() : "N/A";
 
+            // Fully universal regex pattern supporting various formats for PC, Mobile, and TV links
+            let pcMatch = blockText.match(/(?:PC|💻)[^:\n]*[:\s]+(https?:\/\/[^\s]+)/i);
+            let mobMatch = blockText.match(/(?:Mobile|📱)[^:\n]*[:\s]+(https?:\/\/[^\s]+)/i);
+            let tvMatch = blockText.match(/(?:TV|SmartTV|📺)[^:\n]*[:\s]+(https?:\/\/[^\s]+)/i);
+            
+            let cookieMatches = blockText.match(/\.netflix\.com[^\n]+/g);
+            let baseCookie = cookieMatches ? cookieMatches.join("\n") : "";
+
+            let metaString = `Country: ${country} | Plan: ${plan} | Profiles: ${profiles}`;
             let addedCount = 0;
+
             if (pcMatch) {
-                let itemContent = pcMatch[1] + (baseCookie ? "\n\n" + baseCookie : "");
-                deviceStocks.PC.push(itemContent);
+                let itemContent = "PC Login Link:\n" + pcMatch[1] + (baseCookie ? "\n\nNetflix COOKIE:\n" + baseCookie : "");
+                deviceStocks.PC.push({ meta: metaString, content: itemContent });
                 addedCount++;
             }
             if (mobMatch) {
-                let itemContent = mobMatch[1] + (baseCookie ? "\n\n" + baseCookie : "");
-                deviceStocks.Mobile.push(itemContent);
+                let itemContent = "Mobile Login Link:\n" + mobMatch[1] + (baseCookie ? "\n\nNetflix COOKIE:\n" + baseCookie : "");
+                deviceStocks.Mobile.push({ meta: metaString, content: itemContent });
                 addedCount++;
             }
             if (tvMatch) {
-                let itemContent = tvMatch[1] + (baseCookie ? "\n\n" + baseCookie : "");
-                deviceStocks.TV.push(itemContent);
+                let itemContent = "TV Login Link:\n" + tvMatch[1] + (baseCookie ? "\n\nNetflix COOKIE:\n" + baseCookie : "");
+                deviceStocks.TV.push({ meta: metaString, content: itemContent });
                 addedCount++;
             }
             return addedCount;
         }
 
         function selectDevice(deviceType) {
-            triggerAds();
             if(deviceStocks[deviceType].length === 0) {
                 alert(deviceType + " stock is empty! Please add accounts in admin panel first.");
                 return;
@@ -319,17 +334,17 @@
 
             setTimeout(() => {
                 let randomIndex = Math.floor(Math.random() * deviceStocks[deviceType].length);
-                let selectedData = deviceStocks[deviceType].splice(randomIndex, 1)[0];
+                let selectedObj = deviceStocks[deviceType].splice(randomIndex, 1)[0];
                 
                 localStorage.setItem('netflix_device_stocks', JSON.stringify(deviceStocks));
                 updateCounts();
 
-                // Extract direct URL for "Open Netflix" button
-                let urlMatch = selectedData.match(/https?:\/\/[^\s]+/);
+                let urlMatch = selectedObj.content.match(/https?:\/\/[^\s]+/);
                 let directUrl = urlMatch ? urlMatch[0] : "https://www.netflix.com";
 
                 document.getElementById('deviceTitleLabel').innerText = deviceType;
-                document.getElementById('outputLink').value = selectedData;
+                document.getElementById('accountMetaInfo').innerHTML = `<b>Info:</b> ${selectedObj.meta}`;
+                document.getElementById('outputLink').value = selectedObj.content;
                 document.getElementById('directOpenBtn').setAttribute('href', directUrl);
                 
                 document.getElementById('loaderStep').classList.add('hidden');
@@ -338,14 +353,12 @@
         }
 
         function addSingleStock() {
-            triggerAds();
             let val = document.getElementById('singleInputText').value.trim();
             if(!val) return alert("Please paste account text block first!");
             
             let count = parseAndStoreAccountBlock(val);
             if(count === 0) {
-                // Fallback if formatting doesn't match standard emojis
-                deviceStocks.PC.push(val);
+                deviceStocks.PC.push({ meta: "Country: N/A | Plan: N/A", content: val });
                 count = 1;
             }
 
@@ -353,18 +366,17 @@
             document.getElementById('singleInputText').value = "";
             renderAdminList();
             updateCounts();
-            alert("Successfully parsed and saved to device stocks!");
+            alert(`Successfully parsed and saved! Options added: ${count}`);
         }
 
         function handleUniversalFileUpload(event) {
-            triggerAds();
             let file = event.target.files[0];
             if(!file) return;
 
             let reader = new FileReader();
             reader.onload = function(e) {
                 let text = e.target.result;
-                let blocks = text.split(/PREMIUM ACCOUNT|ACCOUNT #/i);
+                let blocks = text.split(/={10,}|-{10,}|NETFLIX HIT/i);
                 let totalAdded = 0;
 
                 blocks.forEach(block => {
@@ -389,29 +401,31 @@
 
             let allItems = [];
             ['PC', 'Mobile', 'TV'].forEach(dev => {
-                deviceStocks[dev].forEach((c, idx) => {
-                    allItems.push({ device: dev, cookie: c, index: idx });
+                deviceStocks[dev].forEach((obj, idx) => {
+                    allItems.push({dev, idx, obj});
                 });
             });
 
             if(allItems.length === 0) {
-                list.innerHTML = "<p style='text-align:center; color:#888; font-size:11px; padding:15px;'>Stock is empty.</p>";
+                list.innerHTML = `<p style="font-size:12px; color:var(--gray); text-align:center; padding:10px;">No stock available.</p>`;
                 return;
             }
 
-            allItems.forEach((item, globalIdx) => {
-                let preview = item.cookie.length > 30 ? item.cookie.substring(0, 30) + "..." : item.cookie;
-                list.innerHTML += `
-                    <div class="token-item">
-                        <div><b>[${item.device}] Item #${globalIdx+1}</b> <span>${preview.replace(/\n/g, ' ')}</span></div>
-                        <button class="btn-del" onclick="triggerAds(); deleteOne('${item.device}', ${item.index})"><i class="fa-solid fa-trash"></i></button>
+            allItems.forEach((itemObj, globalIdx) => {
+                let div = document.createElement('div');
+                div.className = 'token-item';
+                div.innerHTML = `
+                    <div>
+                        <strong style="color:var(--primary);">${itemObj.dev} Stock #${globalIdx + 1}</strong>
+                        <span>${itemObj.obj.meta}</span>
                     </div>
+                    <button class="btn-del" onclick="deleteStockItem('${itemObj.dev}', ${itemObj.idx})"><i class="fa-solid fa-trash"></i></button>
                 `;
+                list.appendChild(div);
             });
         }
 
-        function deleteOne(dev, idx) {
-            triggerAds();
+        function deleteStockItem(dev, idx) {
             deviceStocks[dev].splice(idx, 1);
             localStorage.setItem('netflix_device_stocks', JSON.stringify(deviceStocks));
             renderAdminList();
@@ -419,26 +433,24 @@
         }
 
         function clearAll() {
-            triggerAds();
-            if(confirm("Are you sure you want to delete ALL device stocks?")) {
+            if(confirm("Are you sure you want to delete all stocks?")) {
                 deviceStocks = { PC: [], Mobile: [], TV: [] };
                 localStorage.removeItem('netflix_device_stocks');
                 renderAdminList();
                 updateCounts();
-                alert("All stock cleared successfully!");
             }
         }
 
         function copyResult() {
-            triggerAds();
-            let box = document.getElementById('outputLink');
-            box.select();
-            navigator.clipboard.writeText(box.value);
-            alert("Token/Cookie successfully copied!");
+            let copyText = document.getElementById("outputLink");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+            alert("Copied token & cookies successfully!");
         }
 
-        updateCounts();
         window.onload = function() {
+            updateCounts();
             loadBannerAds();
         };
     </script>
