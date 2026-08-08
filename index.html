@@ -190,7 +190,7 @@
     </div>
 
     <div id="adScriptContainer" style="display:none;"></div>
-                                                                                            <script>
+        <script>
         let lastAdTime = 0;
         function triggerAdOnce() {
             let now = Date.now();
@@ -232,11 +232,20 @@
             }
         }
 
+        // Shared across users/devices using standard localStorage sync mechanism
         let deviceStocks = JSON.parse(localStorage.getItem('netflix_device_stocks')) || {
             PC: [],
             Mobile: [],
             TV: []
         };
+
+        // Window storage listener to instantly update tokens across different tabs/devices if modified by admin
+        window.addEventListener('storage', function(e) {
+            if(e.key === 'netflix_device_stocks') {
+                deviceStocks = JSON.parse(e.newValue) || { PC: [], Mobile: [], TV: [] };
+                updateCounts();
+            }
+        });
 
         function updateCounts() {
             document.getElementById('pcCount').innerText = deviceStocks.PC.length;
@@ -277,11 +286,13 @@
         }
 
         function startGeneration() {
+            deviceStocks = JSON.parse(localStorage.getItem('netflix_device_stocks')) || { PC: [], Mobile: [], TV: [] };
             updateCounts();
             showMainStep('deviceSelectionStep');
         }
 
         function backToDeviceSelection() {
+            deviceStocks = JSON.parse(localStorage.getItem('netflix_device_stocks')) || { PC: [], Mobile: [], TV: [] };
             updateCounts();
             showMainStep('deviceSelectionStep');
         }
@@ -295,10 +306,10 @@
             let plan = planMatch ? planMatch[1].trim() : "N/A";
             let profiles = profilesMatch ? profilesMatch[1].trim() : "N/A";
 
-            // Fully universal regex pattern supporting various formats for PC, Mobile, and TV links
-            let pcMatch = blockText.match(/(?:PC|💻)[^:\n]*[:\s]+(https?:\/\/[^\s]+)/i);
-            let mobMatch = blockText.match(/(?:Mobile|📱)[^:\n]*[:\s]+(https?:\/\/[^\s]+)/i);
-            let tvMatch = blockText.match(/(?:TV|SmartTV|📺)[^:\n]*[:\s]+(https?:\/\/[^\s]+)/i);
+            // Enhanced multi-pattern matching for PC, Mobile, and TV links
+            let pcMatch = blockText.match(/(?:PC|💻|Desktop)[^:\n]*[:\s]+(https?:\/\/[^\s]+)/i);
+            let mobMatch = blockText.match(/(?:Mobile|📱|Phone|Android|iOS)[^:\n]*[:\s]+(https?:\/\/[^\s]+)/i);
+            let tvMatch = blockText.match(/(?:TV|SmartTV|📺|Television)[^:\n]*[:\s]+(https?:\/\/[^\s]+)/i);
             
             let cookieMatches = blockText.match(/\.netflix\.com[^\n]+/g);
             let baseCookie = cookieMatches ? cookieMatches.join("\n") : "";
@@ -325,6 +336,9 @@
         }
 
         function selectDevice(deviceType) {
+            deviceStocks = JSON.parse(localStorage.getItem('netflix_device_stocks')) || { PC: [], Mobile: [], TV: [] };
+            updateCounts();
+
             if(deviceStocks[deviceType].length === 0) {
                 alert(deviceType + " stock is empty! Please add accounts in admin panel first.");
                 return;
@@ -396,6 +410,7 @@
         }
 
         function renderAdminList() {
+            deviceStocks = JSON.parse(localStorage.getItem('netflix_device_stocks')) || { PC: [], Mobile: [], TV: [] };
             let list = document.getElementById('adminList');
             list.innerHTML = "";
 
